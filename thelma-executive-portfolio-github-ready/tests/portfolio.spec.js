@@ -66,7 +66,7 @@ test('mobile layout has no horizontal overflow and stage controls remain usable'
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Download CV' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'CV' })).toBeVisible();
 
   const positions = await page.evaluate(() => {
     const header = document.querySelector('header').getBoundingClientRect();
