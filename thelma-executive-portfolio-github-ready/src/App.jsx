@@ -279,6 +279,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
   const captureTimerRef = useRef(null);
   const objectUrlsRef = useRef({ leftCenter: null, right: null });
   const userActivatedRef = useRef(false);
+  const touchStartRef = useRef(null);
   const shutterTriggeredInCycleRef = useRef(false);
 
   useEffect(() => {
@@ -491,14 +492,36 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
         }}
         onMouseLeave={() => setIsInsideHero(false)}
         onMouseMove={(e) => evaluateZoneFromPointer(e.clientX)}
+        onTouchStart={(e) => {
+          const touch = e.touches?.[0];
+          if (!touch || e.target.closest('button')) {
+            touchStartRef.current = null;
+            return;
+          }
+          touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+          setIsInsideHero(true);
+          if (!userActivatedRef.current) playZoneSegment(currentZoneRef.current);
+        }}
         onTouchMove={(e) => {
-          if (e.touches && e.touches[0]) {
-            setIsInsideHero(true);
-            if (!userActivatedRef.current) playZoneSegment(currentZoneRef.current);
-            evaluateZoneFromPointer(e.touches[0].clientX);
+          const touch = e.touches?.[0];
+          const start = touchStartRef.current;
+          if (!touch || !start || e.target.closest('button')) return;
+
+          const deltaX = touch.clientX - start.x;
+          const deltaY = touch.clientY - start.y;
+          if (Math.abs(deltaX) > Math.abs(deltaY) + 4) {
+            evaluateZoneFromPointer(touch.clientX);
           }
         }}
-        className={`relative w-full aspect-video rounded-3xl overflow-hidden border border-slate-200/90 bg-[#F8FAFC] shadow-[0_25px_70px_-15px_rgba(15,23,42,0.14)] select-none ${
+        onTouchEnd={() => {
+          touchStartRef.current = null;
+          setIsInsideHero(false);
+        }}
+        onTouchCancel={() => {
+          touchStartRef.current = null;
+          setIsInsideHero(false);
+        }}
+        className={`relative w-full aspect-[4/3] sm:aspect-video rounded-3xl overflow-hidden border border-slate-200/90 bg-[#F8FAFC] shadow-[0_25px_70px_-15px_rgba(15,23,42,0.14)] select-none ${
           isInsideHero ? 'cursor-none' : 'cursor-default'
         }`}
       >
@@ -603,7 +626,8 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
               <button
                 key={zone}
                 type="button"
-                onClick={() => {
+                aria-pressed={isSelected}
+                onClick={() => {}
                   if (dwellTimerRef.current) clearTimeout(dwellTimerRef.current);
                   dwellTimerRef.current = null;
                   pendingZoneRef.current = null;
@@ -612,7 +636,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
                   playZoneSegment(zone);
                   triggerShutterCapture(zone);
                 }}
-                className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                className={`flex min-h-11 items-center gap-1.5 rounded-lg px-2 text-[10px] font-semibold transition-all sm:px-2.5 sm:py-1 sm:text-xs ${
                   isSelected
                     ? 'bg-slate-900 text-white shadow-sm'
                     : 'text-slate-700 hover:bg-slate-100'
@@ -892,6 +916,16 @@ export default function App() {
             </a>
           </nav>
 
+          <nav
+            aria-label="Mobile and tablet navigation"
+            className="grid w-full grid-cols-2 gap-2 border-t border-slate-100 pt-2 sm:grid-cols-4 2xl:hidden"
+          >
+            <a href="#interactive-hero" className="flex min-h-11 items-center rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-semibold leading-tight text-slate-700 transition-colors hover:bg-slate-100 sm:text-xs">Interactive Stage</a>
+            <a href="#case-studies" className="flex min-h-11 items-center rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-semibold leading-tight text-slate-700 transition-colors hover:bg-slate-100 sm:text-xs">STAR Case Studies</a>
+            <a href="#honors-grid" className="flex min-h-11 items-center rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-semibold leading-tight text-slate-700 transition-colors hover:bg-slate-100 sm:text-xs">Honors & Certifications</a>
+            <a href="#framing-the-data" className="flex min-h-11 items-center rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-semibold leading-tight text-slate-700 transition-colors hover:bg-slate-100 sm:text-xs">Framing the Data</a>
+          </nav>
+
           <div className="flex shrink-0 items-center">
             <a
               href="./Thelma_Agnes_Peter_CV_ATS.pdf"
@@ -899,7 +933,8 @@ export default function App() {
               className="inline-flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm transition-all"
             >
               <Download className="w-3.5 h-3.5 text-amber-400" />
-              <span>Download CV</span>
+              <span className="sm:hidden">CV</span>
+              <span className="hidden sm:inline">Download CV</span>
             </a>
           </div>
         </div>
@@ -909,7 +944,7 @@ export default function App() {
           HERO SECTION: EXECUTIVE INTRO + DUAL-VIDEO ANIME CAPTURE STAGE
       ====================================================================== */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-20 space-y-24">
-        <section id="interactive-hero" className="space-y-6 scroll-mt-24">
+        <section id="interactive-hero" className="space-y-6 scroll-mt-36">
           {/* Recruiter Quick-Scan Bar */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div className="space-y-3 max-w-3xl">
@@ -949,18 +984,18 @@ export default function App() {
             </div>
 
             {/* High-Contrast Recruiter CTAs */}
-            <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <div className="flex w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center lg:w-auto lg:shrink-0">
               <a
                 href="./Thelma_Agnes_Peter_CV_ATS.pdf"
                 download="Thelma_Agnes_Peter_CV_ATS.pdf"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-md transition-all"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl bg-amber-500 px-5 py-3 text-sm font-bold text-slate-950 shadow-md transition-all hover:bg-amber-400 sm:w-auto"
               >
                 <Download className="w-4 h-4" />
                 <span>Download 1-Page CV (PDF)</span>
               </a>
               <a
                 href="#case-studies"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md transition-all"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-blue-700 sm:w-auto"
               >
                 <BarChart3 className="w-4 h-4" />
                 <span>Explore ROI Case Studies</span>
@@ -979,7 +1014,7 @@ export default function App() {
         {/* ===================================================================
             SECTION 1: STAR-METHOD CRM & BUSINESS ANALYSIS CASE STUDIES
         ==================================================================== */}
-        <section id="case-studies" className="space-y-8 scroll-mt-20">
+        <section id="case-studies" className="space-y-8 scroll-mt-36">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-5">
             <div>
               <span className="text-xs font-mono font-bold uppercase tracking-widest text-blue-600">
@@ -1111,7 +1146,7 @@ export default function App() {
         {/* ===================================================================
             SECTION 2: HONORS, CERTIFICATIONS & AWARDS BENTO GRID
         ==================================================================== */}
-        <section id="honors-grid" className="space-y-8 scroll-mt-20">
+        <section id="honors-grid" className="space-y-8 scroll-mt-36">
           <div className="border-b border-slate-200 pb-5">
             <span className="text-xs font-mono font-bold uppercase tracking-widest text-amber-600">
               CREDENTIALS & RECOGNITION • VERIFIED RECORD
@@ -1121,9 +1156,9 @@ export default function App() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Award 1: 9+ MUN Photojournalism Awards */}
-            <div className="md:col-span-7 rounded-3xl p-6 bg-gradient-to-br from-amber-500/15 via-white to-white border border-amber-500/30 shadow-sm flex flex-col justify-between">
+            <div className="lg:col-span-7 rounded-3xl p-6 bg-gradient-to-br from-amber-500/15 via-white to-white border border-amber-500/30 shadow-sm flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500 text-slate-950 text-xs font-bold">
                   <Award className="w-3.5 h-3.5" />
@@ -1153,7 +1188,7 @@ export default function App() {
             </div>
 
             {/* Academic Distinction */}
-            <div className="md:col-span-5 rounded-3xl p-6 bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between">
+            <div className="lg:col-span-5 rounded-3xl p-6 bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between">
               <div className="space-y-3">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold">
                   SRM Institute of Science & Technology (2020–2024)
@@ -1187,7 +1222,7 @@ export default function App() {
             </div>
 
             {/* Professional Certifications */}
-            <div className="md:col-span-6 rounded-3xl p-6 bg-white border border-slate-200/90 shadow-sm space-y-4">
+            <div className="lg:col-span-6 rounded-3xl p-6 bg-white border border-slate-200/90 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700">
                   IIBA & TECHNICAL CREDENTIALS
@@ -1226,7 +1261,7 @@ export default function App() {
             </div>
 
             {/* Executive Student Leadership */}
-            <div className="md:col-span-6 rounded-3xl p-6 bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between">
+            <div className="lg:col-span-6 rounded-3xl p-6 bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between">
               <div className="space-y-3">
                 <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-600">
                   EXECUTIVE LEADERSHIP PROGRESSION (2021–2024)
@@ -1264,7 +1299,7 @@ export default function App() {
         {/* ===================================================================
             SECTION 3: "FRAMING THE DATA" DUAL SHOWCASE
         ==================================================================== */}
-        <section id="framing-the-data" className="space-y-8 scroll-mt-20">
+        <section id="framing-the-data" className="space-y-8 scroll-mt-36">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-5">
             <div>
               <span className="text-xs font-mono font-bold uppercase tracking-widest text-amber-600">
@@ -1284,14 +1319,18 @@ export default function App() {
                 <button
                   key={tab.id}
                   type="button"
+                  aria-pressed={activeShowcaseTab === tab.id}
                   onClick={() => setActiveShowcaseTab(tab.id)}
-                  className={`px-3 py-1.5 rounded-lg transition-all ${
+                  className={`min-h-10 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[11px] transition-all sm:px-3 sm:text-xs ${
                     activeShowcaseTab === tab.id
                       ? 'bg-slate-900 text-white'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  {tab.label}
+                  <span className="sm:hidden">
+                    {tab.id === 'dual' ? 'Dual' : tab.id === 'bi' ? 'BI' : 'Photo'}
+                  </span>
+                  <span className="hidden sm:inline">{tab.label}</span>
                 </button>
               ))}
             </div>
