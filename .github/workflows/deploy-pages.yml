@@ -65,7 +65,6 @@ jobs:
           cp -a classic-src/thelma-executive-portfolio-github-ready/dist/. thelma-executive-portfolio-github-ready/dist/classic/
           python - <<'PY'
           from pathlib import Path
-          import re
 
           page = Path("thelma-executive-portfolio-github-ready/dist/classic/index.html")
           html = page.read_text()
@@ -75,9 +74,11 @@ jobs:
               '<a href="/TAP/" style="color:#fff;text-decoration:underline;text-underline-offset:3px">'
               'View the refreshed portfolio</a></div>'
           )
-          updated, count = re.subn(r"(<body\\b[^>]*>)", r"\\1" + banner, html, count=1)
-          if count != 1:
-              raise SystemExit("Could not add the refreshed-portfolio link to the classic page.")
+          opening = html.find("<body")
+          opening_end = html.find(">", opening)
+          if opening < 0 or opening_end < 0:
+              raise SystemExit("Could not find the body tag in the classic page.")
+          updated = html[:opening_end + 1] + banner + html[opening_end + 1:]
           page.write_text(updated)
           PY
 
