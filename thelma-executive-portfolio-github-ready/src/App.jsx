@@ -306,6 +306,7 @@ export default function App() {
             <a href="mailto:thelmaagnespeter@gmail.com" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#3E52B8] px-5 py-3 font-semibold text-white transition hover:bg-[#2D3E9A]"><Mail className="h-4 w-4" /> Email</a>
             <a href="https://linkedin.com/in/thelma-agnes" target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#CAD2E8] bg-white/70 px-5 py-3 font-semibold text-[#37415F] transition hover:bg-white"><Linkedin className="h-4 w-4" /> LinkedIn</a>
             <a href="./Thelma_Agnes_Peter_CV_ATS.pdf" download="Thelma_Agnes_Peter_CV_ATS.pdf" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#CAD2E8] bg-white/70 px-5 py-3 font-semibold text-[#37415F] transition hover:bg-white"><Download className="h-4 w-4" /> CV</a>
+            <a href="/TAP/classic/" className="inline-flex min-h-11 items-center rounded-full px-3 py-3 text-xs font-semibold text-[#525C76] underline decoration-[#E97862] underline-offset-4 transition hover:text-[#3E52B8]">View classic version</a>
           </div>
         </div>
         <div className="border-t border-[#E0E5F2] px-5 py-4 text-center text-[11px] text-[#7A839B]">© {new Date().getFullYear()} Thelma Agnes Peter</div>
