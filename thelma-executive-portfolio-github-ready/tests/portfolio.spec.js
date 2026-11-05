@@ -25,21 +25,27 @@ test('interactive stage, case studies, and showcase tabs respond to clicks', asy
   await page.goto('/');
 
   const stage = page.locator('#interactive-hero');
-  await stage.getByRole('button', { name: /Left: CRM & Automation/ }).click();
-  await expect(stage.getByRole('heading', { name: 'End-to-End Requirements & Workflow Automation' })).toBeVisible();
+  await stage.getByRole('button', { name: /Left: CRM Workflow Demo/ }).click();
+  await expect(stage.getByRole('heading', { name: 'CRM Lead Routing & SLA Simulator' })).toBeVisible();
 
-  await stage.getByRole('button', { name: /Right: BI & Photography/ }).click();
-  await expect(stage.getByRole('heading', { name: 'Executive BI Storytelling & SLA Optimization' })).toBeVisible();
+  await stage.getByRole('button', { name: /Right: Independent Analytics Demo/ }).click();
+  await expect(stage.getByRole('heading', { name: 'Retail Operations & Fulfilment Dashboard' })).toBeVisible();
 
-  const firstCase = page.locator('#case-studies article').first();
-  await firstCase.getByRole('button', { name: 'Workflow Architecture' }).click();
-  await expect(firstCase.getByText('System & Data Pipeline Architecture')).toBeVisible();
-  await firstCase.getByRole('button', { name: 'Executive Summary' }).click();
-  await expect(firstCase.getByText('1. Business Problem')).toBeVisible();
+  const firstExperience = page.locator('#case-studies article').first();
+  await expect(firstExperience.getByRole('heading', { name: 'KLA' })).toBeVisible();
+  await firstExperience.getByRole('button', { name: 'Key Contributions' }).click();
+  await expect(firstExperience.getByText('Transferable Contributions (High-Level)')).toBeVisible();
+  await firstExperience.getByRole('button', { name: 'Role Overview' }).click();
+  await expect(firstExperience.getByText('1. Role Context')).toBeVisible();
 
   const showcase = page.locator('#framing-the-data');
-  await showcase.getByRole('button', { name: 'Executive BI Dashboards' }).click();
-  await expect(showcase.getByRole('heading', { name: 'Featured BI & Analytics Engineering Portfolio' })).toBeVisible();
+  await showcase.getByRole('button', { name: 'CRM Workflow Simulator' }).click();
+  await showcase.getByRole('button', { name: 'Run routing simulation' }).click();
+  await expect(showcase.getByRole('heading', { name: 'Priority queue' })).toBeVisible();
+  await showcase.getByRole('button', { name: 'Operations Analytics' }).click();
+  await expect(showcase.getByRole('heading', { name: 'Synthetic Operations Analytics Dashboard' })).toBeVisible();
+  await showcase.getByLabel('Region').selectOption('East');
+  await expect(showcase.getByText('291', { exact: true })).toBeVisible();
   await showcase.getByRole('button', { name: 'Award Photojournalism' }).click();
   await expect(showcase.getByRole('heading', { name: 'How Award-Winning Photojournalism Elevates Dashboard UX' })).toBeVisible();
 });
@@ -85,7 +91,7 @@ test('mobile layout has no horizontal overflow and stage controls remain usable'
   await expect(stage.locator('.absolute.bottom-3.left-3.right-3')).toBeVisible();
   await expect(stage.locator('.pointer-events-none.absolute.bottom-3.right-3')).toBeHidden();
   await stage.getByRole('button', { name: 'CRM' }).click();
-  await expect(stage.getByRole('heading', { name: 'End-to-End Requirements & Workflow Automation' })).toBeVisible();
+  await expect(stage.getByRole('heading', { name: 'CRM Lead Routing & SLA Simulator' })).toBeVisible();
 });
 
 
@@ -166,9 +172,9 @@ test('mobile navigation scrolls sections below the sticky header', async ({ page
   const mobileNav = page.getByRole('navigation', { name: 'Mobile and tablet navigation' });
 
   for (const [label, selector] of [
-    ['STAR Case Studies', '#case-studies'],
+    ['Professional Experience', '#case-studies'],
     ['Honors & Certifications', '#honors-grid'],
-    ['Framing the Data', '#framing-the-data'],
+    ['Independent Demos', '#framing-the-data'],
   ]) {
     await mobileNav.getByRole('link', { name: label }).click();
     await expect(page).toHaveURL(new RegExp(selector.slice(1)));
@@ -205,9 +211,9 @@ test('touch-enabled phone can switch all hero zones and tabs with taps', async (
     await expect(playButton).toBeHidden();
 
     for (const [label, heading, videoIndex] of [
-      ['CRM', 'End-to-End Requirements & Workflow Automation', 0],
+      ['CRM', 'CRM Lead Routing & SLA Simulator', 0],
       ['Awards', '9+ MUN Press Awards, 8.91 GPA & VP Leadership', 0],
-      ['BI', 'Executive BI Storytelling & SLA Optimization', 1],
+      ['BI', 'Retail Operations & Fulfilment Dashboard', 1],
     ]) {
       await stage.getByRole('button', { name: label }).tap();
       await expect(stage.getByRole('heading', { name: heading })).toBeVisible();
@@ -218,8 +224,8 @@ test('touch-enabled phone can switch all hero zones and tabs with taps', async (
     }
 
     const showcase = page.locator('#framing-the-data');
-    await showcase.getByRole('button', { name: 'BI' }).tap();
-    await expect(showcase.getByRole('heading', { name: 'Featured BI & Analytics Engineering Portfolio' })).toBeVisible();
+    await showcase.getByRole('button', { name: 'Ops' }).tap();
+    await expect(showcase.getByRole('heading', { name: 'Synthetic Operations Analytics Dashboard' })).toBeVisible();
     await showcase.getByRole('button', { name: 'Photo' }).tap();
     await expect(showcase.getByRole('heading', { name: 'How Award-Winning Photojournalism Elevates Dashboard UX' })).toBeVisible();
   } finally {
