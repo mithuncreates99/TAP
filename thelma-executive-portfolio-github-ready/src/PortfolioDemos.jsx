@@ -157,7 +157,7 @@ export function OperationsAnalyticsDemo() {
             <option>All statuses</option><option>On time</option><option>At risk</option><option>Delayed</option>
           </select>
         </div>
-        <p className="text-[11px] text-slate-500">Filters update KPIs, trend and order list.</p>
+        <p className="text-[11px] text-slate-500">The region filter updates KPIs and trend; the status filter narrows the sample order list.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
