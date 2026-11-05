@@ -10,3 +10,20 @@
 .animate-shutter-flash {
   animation: flashPulse 480ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+
+:root {
+  color-scheme: light;
+  accent-color: #3E52B8;
+}
+
+::selection {
+  background: #F9D8D0;
+  color: #202641;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid #E97862;
+  outline-offset: 3px;
+}
