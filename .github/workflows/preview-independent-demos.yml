@@ -65,6 +65,7 @@ jobs:
           mkdir -p site/preview
           cp -a live-src/thelma-executive-portfolio-github-ready/dist/. site/
           cp -a preview-src/thelma-executive-portfolio-github-ready/dist/. site/preview/
+          sed -i '/<meta name="viewport"/a\\    <meta name="robots" content="noindex, nofollow" />' site/preview/index.html
           printf '%s\n' 'User review preview. This route is separate from the live homepage.' > site/preview/PREVIEW-ONLY.txt
 
       - name: Configure Pages
