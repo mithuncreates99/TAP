@@ -886,7 +886,7 @@ export default function App() {
           STEP 2: RECRUITER QUICK-SCAN HEADER & ABOVE-THE-FOLD NAVIGATION
       ====================================================================== */}
       <header className="sticky top-0 z-40 backdrop-blur-md bg-white/90 border-b border-slate-200/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-16 py-3 flex flex-wrap xl:flex-nowrap items-center justify-between gap-x-5 gap-y-2.5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-16 py-3 flex flex-wrap 2xl:flex-nowrap items-center justify-between gap-x-5 gap-y-2.5">
           <a href="#interactive-hero" className="order-1 flex min-w-0 items-center gap-3 text-left">
             <span className="w-9 h-9 shrink-0 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center shadow-sm">
               TP
@@ -946,7 +946,7 @@ export default function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-20 space-y-24">
         <section id="interactive-hero" className="space-y-6 scroll-mt-36">
           {/* Recruiter Quick-Scan Bar */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6">
             <div className="space-y-3 max-w-3xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-800 text-xs font-semibold">
                 <Sparkles className="w-3.5 h-3.5 text-amber-600" />
@@ -1278,7 +1278,7 @@ export default function App() {
                   <strong className="text-slate-900">Texus</strong>).
                 </p>
               </div>
-              <div className="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2 text-center text-xs">
                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="text-[10px] font-mono text-slate-500 block">2021–2022</span>
                   <span className="font-bold text-slate-900">Head of Admin</span>
@@ -1310,7 +1310,7 @@ export default function App() {
               </h2>
             </div>
 
-            <div className="inline-flex p-1 rounded-xl bg-white border border-slate-200 shadow-sm text-xs font-semibold">
+            <div className="grid w-full grid-cols-3 gap-1 rounded-xl border border-slate-200 bg-white p-1 text-xs font-semibold sm:inline-flex sm:w-auto">
               {[
                 { id: 'dual', label: 'Dual Synergy View' },
                 { id: 'bi', label: 'Executive BI Dashboards' },
@@ -1321,7 +1321,7 @@ export default function App() {
                   type="button"
                   aria-pressed={activeShowcaseTab === tab.id}
                   onClick={() => setActiveShowcaseTab(tab.id)}
-                  className={`min-h-10 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-[11px] transition-all sm:px-3 sm:text-xs ${
+                  className={`flex min-h-11 items-center justify-center rounded-lg px-1.5 py-1.5 text-center text-[10px] leading-tight transition-all sm:px-3 sm:text-xs ${
                     activeShowcaseTab === tab.id
                       ? 'bg-slate-900 text-white'
                       : 'text-slate-600 hover:text-slate-900'
@@ -1357,7 +1357,7 @@ export default function App() {
                   contrast, negative space, and visual hierarchy—when designing C-suite Power BI and
                   Tableau views so executives spot bottlenecks in under 5 seconds.
                 </p>
-                <div className="grid grid-cols-3 gap-3 pt-2 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
                   <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200/70">
                     <span className="font-bold text-slate-900 block">Focal Isolation</span>
                     <span className="text-slate-600 text-[11px]">
