@@ -984,7 +984,7 @@ export default function App() {
             </div>
 
             {/* High-Contrast Recruiter CTAs */}
-            <div className="flex w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center lg:w-auto lg:shrink-0">
+            <div data-testid="hero-ctas" className="flex w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center lg:w-auto lg:shrink-0">
               <a
                 href="./Thelma_Agnes_Peter_CV_ATS.pdf"
                 download="Thelma_Agnes_Peter_CV_ATS.pdf"
