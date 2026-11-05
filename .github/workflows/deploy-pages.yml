@@ -37,6 +37,14 @@ jobs:
         working-directory: thelma-executive-portfolio-github-ready
         run: npm run build
 
+      - name: Install Chromium for browser tests
+        working-directory: thelma-executive-portfolio-github-ready
+        run: npx playwright install --with-deps chromium
+
+      - name: Run portfolio browser tests
+        working-directory: thelma-executive-portfolio-github-ready
+        run: npm run test:e2e
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
