@@ -45,6 +45,42 @@ jobs:
         working-directory: thelma-executive-portfolio-github-ready
         run: npm run test:e2e
 
+      - name: Checkout the pre-redesign portfolio for the classic route
+        uses: actions/checkout@v4
+        with:
+          ref: 80bcf934f9b6a2f981ce8266de531f5ec2363587
+          path: classic-src
+
+      - name: Install classic portfolio dependencies
+        working-directory: classic-src/thelma-executive-portfolio-github-ready/
+        run: npm install --no-audit --no-fund
+
+      - name: Build classic portfolio
+        working-directory: classic-src/thelma-executive-portfolio-github-ready/
+        run: npm run build
+
+      - name: Add the classic portfolio to the production artifact
+        run: |
+          mkdir -p thelma-executive-portfolio-github-ready/dist/classic
+          cp -a classic-src/thelma-executive-portfolio-github-ready/dist/. thelma-executive-portfolio-github-ready/dist/classic/
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          page = Path("thelma-executive-portfolio-github-ready/dist/classic/index.html")
+          html = page.read_text()
+          banner = (
+              '<div style="position:relative;z-index:9999;text-align:center;padding:11px 16px;'
+              'background:#29345E;font:500 14px Arial,sans-serif">'
+              '<a href="/TAP/" style="color:#fff;text-decoration:underline;text-underline-offset:3px">'
+              'View the refreshed portfolio</a></div>'
+          )
+          updated, count = re.subn(r"(<body\\b[^>]*>)", r"\\1" + banner, html, count=1)
+          if count != 1:
+              raise SystemExit("Could not add the refreshed-portfolio link to the classic page.")
+          page.write_text(updated)
+          PY
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
