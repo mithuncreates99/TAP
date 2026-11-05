@@ -660,7 +660,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
             data-testid="video-play-button"
             aria-label={playbackError ? 'Tap to retry video animation' : 'Tap to play video animation'}
             onClick={() => playZoneSegment(currentZoneRef.current)}
-            className="absolute left-1/2 top-1/2 z-25 inline-flex min-h-12 -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full border border-white/70 bg-slate-950/85 px-5 py-3 text-sm font-semibold text-white shadow-xl backdrop-blur-md transition hover:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-amber-300"
+            className="absolute left-1/2 top-1/2 z-30 inline-flex min-h-12 -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full border border-white/70 bg-slate-950/85 px-5 py-3 text-sm font-semibold text-white shadow-xl backdrop-blur-md transition hover:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-amber-300"
           >
             <Play className="h-4 w-4 fill-current text-amber-400" />
             {playbackError ? 'Tap to retry animation' : 'Tap to play animation'}
