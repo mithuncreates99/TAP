@@ -82,6 +82,8 @@ test('mobile layout has no horizontal overflow and stage controls remain usable'
   expect(positions.headingTop).toBeGreaterThanOrEqual(positions.headerBottom);
 
   const stage = page.locator('#interactive-hero');
+  await expect(stage.locator('.absolute.bottom-3.left-3.right-3')).toBeVisible();
+  await expect(stage.locator('.pointer-events-none.absolute.bottom-3.right-3')).toBeHidden();
   await stage.getByRole('button', { name: 'CRM' }).click();
   await expect(stage.getByRole('heading', { name: 'End-to-End Requirements & Workflow Automation' })).toBeVisible();
 });
