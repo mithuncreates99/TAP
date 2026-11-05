@@ -1,228 +1,131 @@
-import { test, expect, devices } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
-test('desktop header, navigation, and hero stay in their own layout', async ({ page }) => {
+test('the homepage presents a business and operations professional profile', async ({ page }) => {
   const pageErrors = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
 
-  await page.setViewportSize({ width: 1600, height: 1000 });
+  await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/');
   await expect(page).toHaveTitle(/Thelma Agnes Peter/);
-  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('complex work');
+  await expect(page.getByText('Business and Research Analyst', { exact: false }).first()).toBeVisible();
   await expect(page.getByRole('navigation', { name: 'Primary navigation' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Download CV' }).first()).toBeVisible();
 
-  const positions = await page.evaluate(() => {
-    const header = document.querySelector('header').getBoundingClientRect();
-    const heading = document.querySelector('h1').getBoundingClientRect();
-    return { headerBottom: header.bottom, headingTop: heading.top };
-  });
+  const positions = await page.evaluate(() => ({
+    headerBottom: document.querySelector('header').getBoundingClientRect().bottom,
+    headingTop: document.querySelector('h1').getBoundingClientRect().top,
+    scrollWidth: document.documentElement.scrollWidth,
+    viewport: window.innerWidth,
+  }));
   expect(positions.headingTop).toBeGreaterThanOrEqual(positions.headerBottom);
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  expect(positions.scrollWidth).toBeLessThanOrEqual(positions.viewport);
   expect(pageErrors).toEqual([]);
 });
 
-test('interactive stage, case studies, and showcase tabs respond to clicks', async ({ page }) => {
-  await page.setViewportSize({ width: 1600, height: 1000 });
+test('professional experience is public-safe and retains the three employers', async ({ page }) => {
   await page.goto('/');
+  const experience = page.locator('#experience');
+  await expect(experience.getByRole('heading', { name: 'KLA' })).toBeVisible();
+  await expect(experience.getByRole('heading', { name: 'Stellantis' })).toBeVisible();
+  await expect(experience.getByRole('heading', { name: 'Bible Tours' })).toBeVisible();
+  await expect(experience.getByText('Oct 2024 – Mar 2025')).toBeVisible();
+  await expect(experience.getByText('Jun 2023 – Jun 2024')).toBeVisible();
+  await expect(experience.getByText('Mar 2025 – Present')).toBeVisible();
 
-  const stage = page.locator('#interactive-hero');
-  await stage.getByRole('button', { name: /Left: CRM & Automation/ }).click();
-  await expect(stage.getByRole('heading', { name: 'End-to-End Requirements & Workflow Automation' })).toBeVisible();
-
-  await stage.getByRole('button', { name: /Right: BI & Photography/ }).click();
-  await expect(stage.getByRole('heading', { name: 'Executive BI Storytelling & SLA Optimization' })).toBeVisible();
-
-  const firstCase = page.locator('#case-studies article').first();
-  await firstCase.getByRole('button', { name: 'Workflow Architecture' }).click();
-  await expect(firstCase.getByText('System & Data Pipeline Architecture')).toBeVisible();
-  await firstCase.getByRole('button', { name: 'Executive Summary' }).click();
-  await expect(firstCase.getByText('1. Business Problem')).toBeVisible();
-
-  const showcase = page.locator('#framing-the-data');
-  await showcase.getByRole('button', { name: 'Executive BI Dashboards' }).click();
-  await expect(showcase.getByRole('heading', { name: 'Featured BI & Analytics Engineering Portfolio' })).toBeVisible();
-  await showcase.getByRole('button', { name: 'Award Photojournalism' }).click();
-  await expect(showcase.getByRole('heading', { name: 'How Award-Winning Photojournalism Elevates Dashboard UX' })).toBeVisible();
+  const publicCopy = await page.locator('body').innerText();
+  for (const term of [
+    'Site24x7',
+    'OpManager',
+    'Applications Manager',
+    'ServiceNow / Resolve',
+    'Reduced infrastructure downtime by 15%',
+    'Employee Performance & HR Analytics Suite',
+    'Synthetic Operations Analytics Dashboard',
+    'CRM Lead Routing',
+  ]) {
+    expect(publicCopy).not.toContain(term);
+  }
+  await expect(experience.getByText('confidential project details are not reproduced')).toBeVisible();
 });
 
-test('CV and both video assets are published', async ({ page, request }) => {
+test('professional strengths, education, certifications and recognition are visible', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#strengths').getByRole('heading', { name: 'Professional strengths' })).toBeVisible();
+  await expect(page.locator('#strengths').getByText('Business Analysis')).toBeVisible();
+  await expect(page.locator('#strengths').getByText('Operations & Coordination')).toBeVisible();
+  await expect(page.locator('#strengths').getByText('Research & Reporting')).toBeVisible();
+
+  const education = page.locator('#education');
+  await expect(education.getByText('B.Tech — Computer Science & Business Systems')).toBeVisible();
+  await expect(education.getByText('8.91 / 10')).toBeVisible();
+  await expect(education.getByText('AI-Powered Business Analyst Professional')).toBeVisible();
+
+  const recognition = page.locator('#recognition');
+  await expect(recognition.getByText('9+ awards')).toBeVisible();
+  await expect(recognition.getByText('Best International Press Photojournalist at SSN University MUN (2023)')).toBeVisible();
+  await expect(recognition.getByText('Vice President — Camogenics & Department of CSE')).toBeVisible();
+});
+
+test('CV is available as a downloadable PDF', async ({ page, request }) => {
   await page.goto('/');
   const cvResponse = await request.get('/Thelma_Agnes_Peter_CV_ATS.pdf');
   expect(cvResponse.status()).toBe(200);
   expect(cvResponse.headers()['content-type']).toContain('application/pdf');
 
-  for (const asset of ['/assets/hero_left_center.mp4', '/assets/hero_right.mp4']) {
-    const response = await request.get(asset);
-    expect(response.status()).toBe(200);
-    expect(response.headers()['content-type']).toContain('video/mp4');
-  }
-
   const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('link', { name: 'Download CV' }).click();
+  await page.getByRole('link', { name: 'Download CV' }).first().click();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toBe('Thelma_Agnes_Peter_CV_ATS.pdf');
 });
 
-test('mobile layout has no horizontal overflow and stage controls remain usable', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'CV', exact: true })).toBeVisible();
-
-  const positions = await page.evaluate(() => {
-    const header = document.querySelector('header').getBoundingClientRect();
-    const heading = document.querySelector('h1').getBoundingClientRect();
-    return {
-      width: document.documentElement.scrollWidth,
-      viewport: window.innerWidth,
-      headerBottom: header.bottom,
-      headingTop: heading.top,
-    };
-  });
-  expect(positions.width).toBeLessThanOrEqual(positions.viewport);
-  expect(positions.headingTop).toBeGreaterThanOrEqual(positions.headerBottom);
-
-  const stage = page.locator('#interactive-hero');
-  await expect(stage.locator('.absolute.bottom-3.left-3.right-3')).toBeVisible();
-  await expect(stage.locator('.pointer-events-none.absolute.bottom-3.right-3')).toBeHidden();
-  await stage.getByRole('button', { name: 'CRM' }).click();
-  await expect(stage.getByRole('heading', { name: 'End-to-End Requirements & Workflow Automation' })).toBeVisible();
-});
-
-
-test('mobile and tablet widths keep the header, hero, and page inside the viewport', async ({ page }) => {
-  const widths = [320, 360, 375, 390, 414, 430, 640, 768, 820, 1024, 1280, 1440];
-  await page.goto('/');
-  await page.waitForLoadState('domcontentloaded');
-
-  for (const width of widths) {
-    await page.setViewportSize({ width, height: 900 });
-    const layout = await page.evaluate(() => {
-      const rect = (selector) => {
-        const element = document.querySelector(selector);
-        if (!element) return null;
-        const r = element.getBoundingClientRect();
-        return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
-      };
-      const mobileNav = document.querySelector('nav[aria-label="Mobile and tablet navigation"]');
-      const zoneControls = document.querySelector('#interactive-hero video')?.parentElement?.querySelector('div.absolute.top-2');
-      const proofCard = document.querySelector('#interactive-hero video')?.parentElement?.querySelector('div.absolute.bottom-3.left-3.right-3');
-      const ctas = [...document.querySelectorAll('[data-testid="hero-ctas"] a')].map((el) => {
-        const r = el.getBoundingClientRect();
-        return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, height: r.height };
-      });
-      return {
-        width: document.documentElement.scrollWidth,
-        viewport: window.innerWidth,
-        header: rect('header'),
-        brand: rect('header a[href="#interactive-hero"]'),
-        cv: rect('header a[download]'),
-        mobileNavVisible: mobileNav ? getComputedStyle(mobileNav).display !== 'none' : false,
-        mobileNav: rect('nav[aria-label="Mobile and tablet navigation"]'),
-        navItems: mobileNav ? [...mobileNav.querySelectorAll('a')].map((el) => {
-          const r = el.getBoundingClientRect();
-          return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, height: r.height };
-        }) : [],
-        zoneControls: rect('#interactive-hero video') ? (() => {
-          const r = zoneControls.getBoundingClientRect();
-          return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, height: r.height };
-        })() : null,
-        proofCard: rect('#interactive-hero video') ? (() => {
-          const r = proofCard.getBoundingClientRect();
-          return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, height: r.height };
-        })() : null,
-        ctas,
-        stage: rect('#interactive-hero video'),
-      };
-    });
-
-    expect(layout.width, `horizontal overflow at ${width}px`).toBeLessThanOrEqual(width);
-    expect(layout.header.right).toBeLessThanOrEqual(width);
-    expect(layout.brand.left).toBeGreaterThanOrEqual(0);
-    expect(layout.cv.right).toBeLessThanOrEqual(width);
-    expect(layout.cv.left).toBeGreaterThanOrEqual(layout.brand.right - 1);
-    expect(Math.abs(layout.cv.top - layout.brand.top)).toBeLessThan(10);
-    expect(layout.mobileNavVisible, `mobile/tablet nav hidden at ${width}px`).toBe(true);
-    expect(layout.mobileNav.top).toBeGreaterThanOrEqual(Math.max(layout.brand.bottom, layout.cv.bottom) - 1);
-    for (const item of layout.navItems) {
-      expect(item.left).toBeGreaterThanOrEqual(0);
-      expect(item.right).toBeLessThanOrEqual(width);
-      expect(item.height).toBeGreaterThanOrEqual(44);
-    }
-    for (const cta of layout.ctas) {
-      expect(cta.left).toBeGreaterThanOrEqual(0);
-      expect(cta.right).toBeLessThanOrEqual(width);
-      expect(cta.height).toBeGreaterThanOrEqual(44);
-    }
-    expect(layout.zoneControls.height).toBeGreaterThanOrEqual(44);
-    expect(layout.proofCard.left).toBeGreaterThanOrEqual(0);
-    expect(layout.proofCard.right).toBeLessThanOrEqual(width);
-    expect(layout.zoneControls.bottom).toBeLessThan(layout.proofCard.top);
-  }
-});
-
-test('mobile navigation scrolls sections below the sticky header', async ({ page }) => {
+test('mobile navigation scrolls to the main profile sections', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   const mobileNav = page.getByRole('navigation', { name: 'Mobile and tablet navigation' });
 
   for (const [label, selector] of [
-    ['STAR Case Studies', '#case-studies'],
-    ['Honors & Certifications', '#honors-grid'],
-    ['Framing the Data', '#framing-the-data'],
+    ['Experience', '#experience'],
+    ['Strengths', '#strengths'],
+    ['Education', '#education'],
+    ['Recognition', '#recognition'],
   ]) {
-    await mobileNav.getByRole('link', { name: label }).click();
+    await mobileNav.getByRole('link', { name: label, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(selector.slice(1)));
-    const offset = await page.evaluate((targetSelector) => {
-      const header = document.querySelector('header').getBoundingClientRect();
-      const target = document.querySelector(targetSelector).getBoundingClientRect();
-      return { headerBottom: header.bottom, targetTop: target.top };
-    }, selector);
+    const offset = await page.evaluate((targetSelector) => ({
+      headerBottom: document.querySelector('header').getBoundingClientRect().bottom,
+      targetTop: document.querySelector(targetSelector).getBoundingClientRect().top,
+    }), selector);
     expect(offset.targetTop).toBeGreaterThanOrEqual(offset.headerBottom - 1);
   }
 });
 
-test('touch-enabled phone can switch all hero zones and tabs with taps', async ({ browser }) => {
-  const phone = devices['iPhone 13'];
-  const context = await browser.newContext({
-    ...phone,
-    baseURL: 'http://127.0.0.1:4173/',
-  });
-  const page = await context.newPage();
+test('common phone, tablet and desktop widths have no horizontal overflow', async ({ page }) => {
+  const widths = [320, 360, 375, 390, 414, 430, 640, 768, 820, 1024, 1280, 1440];
+  await page.goto('/');
 
-  try {
-    await page.goto('/');
-    const stage = page.locator('#interactive-hero');
-    const videos = stage.locator('video');
-    const playButton = stage.getByTestId('video-play-button');
-
-    // A phone should expose an explicit user-gesture fallback before playback.
-    await expect(playButton).toBeVisible();
-    await playButton.tap();
-    await expect.poll(
-      () => videos.nth(0).evaluate((video) => !video.paused),
-      { timeout: 10000 }
-    ).toBe(true);
-    await expect(playButton).toBeHidden();
-
-    for (const [label, heading, videoIndex] of [
-      ['CRM', 'End-to-End Requirements & Workflow Automation', 0],
-      ['Awards', '9+ MUN Press Awards, 8.91 GPA & VP Leadership', 0],
-      ['BI', 'Executive BI Storytelling & SLA Optimization', 1],
-    ]) {
-      await stage.getByRole('button', { name: label }).tap();
-      await expect(stage.getByRole('heading', { name: heading })).toBeVisible();
-      await expect.poll(
-        () => videos.nth(videoIndex).evaluate((video) => !video.paused),
-        { timeout: 10000 }
-      ).toBe(true);
-    }
-
-    const showcase = page.locator('#framing-the-data');
-    await showcase.getByRole('button', { name: 'BI' }).tap();
-    await expect(showcase.getByRole('heading', { name: 'Featured BI & Analytics Engineering Portfolio' })).toBeVisible();
-    await showcase.getByRole('button', { name: 'Photo' }).tap();
-    await expect(showcase.getByRole('heading', { name: 'How Award-Winning Photojournalism Elevates Dashboard UX' })).toBeVisible();
-  } finally {
-    await context.close();
+  for (const width of widths) {
+    await page.setViewportSize({ width, height: 900 });
+    const layout = await page.evaluate(() => {
+      const header = document.querySelector('header').getBoundingClientRect();
+      const hero = document.querySelector('h1').getBoundingClientRect();
+      const mobileNav = document.querySelector('nav[aria-label="Mobile and tablet navigation"]');
+      const desktopNav = document.querySelector('nav[aria-label="Primary navigation"]');
+      return {
+        width: document.documentElement.scrollWidth,
+        viewport: window.innerWidth,
+        headerRight: header.right,
+        heroLeft: hero.left,
+        heroRight: hero.right,
+        mobileNavVisible: mobileNav ? getComputedStyle(mobileNav).display !== 'none' : false,
+        desktopNavVisible: desktopNav ? getComputedStyle(desktopNav).display !== 'none' : false,
+      };
+    });
+    expect(layout.width, `horizontal overflow at ${width}px`).toBeLessThanOrEqual(width);
+    expect(layout.headerRight).toBeLessThanOrEqual(width);
+    expect(layout.heroLeft).toBeGreaterThanOrEqual(0);
+    expect(layout.heroRight).toBeLessThanOrEqual(width);
+    if (width < 768) expect(layout.mobileNavVisible).toBe(true);
+    if (width >= 768) expect(layout.desktopNavVisible).toBe(true);
   }
 });
