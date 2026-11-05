@@ -886,13 +886,13 @@ export default function App() {
           STEP 2: RECRUITER QUICK-SCAN HEADER & ABOVE-THE-FOLD NAVIGATION
       ====================================================================== */}
       <header className="sticky top-0 z-40 backdrop-blur-md bg-white/90 border-b border-slate-200/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-16 py-3 flex flex-wrap 2xl:flex-nowrap items-center justify-between gap-x-5 gap-y-2.5">
-          <a href="#interactive-hero" className="order-1 flex min-w-0 items-center gap-3 text-left">
-            <span className="w-9 h-9 shrink-0 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-16 py-3 flex flex-wrap 2xl:flex-nowrap items-center justify-between gap-x-2 sm:gap-x-5 gap-y-2.5">
+          <a href="#interactive-hero" className="order-1 flex min-w-0 items-center gap-2 sm:gap-3 text-left">
+            <span className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center shadow-sm">
               TP
             </span>
             <span className="min-w-0">
-              <span className="block whitespace-nowrap font-bold text-slate-900 tracking-tight">
+              <span className="block whitespace-nowrap text-sm sm:text-base font-bold text-slate-900 tracking-tight">
                 Thelma Agnes Peter
               </span>
               <span className="hidden sm:block max-w-[22rem] truncate text-xs text-slate-500">
@@ -930,7 +930,7 @@ export default function App() {
             <a
               href="./Thelma_Agnes_Peter_CV_ATS.pdf"
               download="Thelma_Agnes_Peter_CV_ATS.pdf"
-              className="inline-flex items-center gap-1.5 whitespace-nowrap px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm transition-all"
+              className="inline-flex min-h-11 items-center justify-center gap-1.5 whitespace-nowrap px-2 sm:px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm transition-all"
             >
               <Download className="w-3.5 h-3.5 text-amber-400" />
               <span className="sm:hidden">CV</span>
