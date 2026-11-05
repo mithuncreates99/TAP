@@ -944,7 +944,7 @@ export default function App() {
           HERO SECTION: EXECUTIVE INTRO + DUAL-VIDEO ANIME CAPTURE STAGE
       ====================================================================== */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-20 space-y-24">
-        <section id="interactive-hero" className="space-y-6 scroll-mt-36">
+        <section id="interactive-hero" className="space-y-6 scroll-mt-44 sm:scroll-mt-32">
           {/* Recruiter Quick-Scan Bar */}
           <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6">
             <div className="space-y-3 max-w-3xl">
@@ -1014,7 +1014,7 @@ export default function App() {
         {/* ===================================================================
             SECTION 1: STAR-METHOD CRM & BUSINESS ANALYSIS CASE STUDIES
         ==================================================================== */}
-        <section id="case-studies" className="space-y-8 scroll-mt-36">
+        <section id="case-studies" className="space-y-8 scroll-mt-44 sm:scroll-mt-32">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-5">
             <div>
               <span className="text-xs font-mono font-bold uppercase tracking-widest text-blue-600">
@@ -1146,7 +1146,7 @@ export default function App() {
         {/* ===================================================================
             SECTION 2: HONORS, CERTIFICATIONS & AWARDS BENTO GRID
         ==================================================================== */}
-        <section id="honors-grid" className="space-y-8 scroll-mt-36">
+        <section id="honors-grid" className="space-y-8 scroll-mt-44 sm:scroll-mt-32">
           <div className="border-b border-slate-200 pb-5">
             <span className="text-xs font-mono font-bold uppercase tracking-widest text-amber-600">
               CREDENTIALS & RECOGNITION • VERIFIED RECORD
@@ -1299,7 +1299,7 @@ export default function App() {
         {/* ===================================================================
             SECTION 3: "FRAMING THE DATA" DUAL SHOWCASE
         ==================================================================== */}
-        <section id="framing-the-data" className="space-y-8 scroll-mt-36">
+        <section id="framing-the-data" className="space-y-8 scroll-mt-44 sm:scroll-mt-32">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-5">
             <div>
               <span className="text-xs font-mono font-bold uppercase tracking-widest text-amber-600">
