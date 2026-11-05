@@ -192,13 +192,29 @@ test('touch-enabled phone can switch all hero zones and tabs with taps', async (
   try {
     await page.goto('/');
     const stage = page.locator('#interactive-hero');
-    for (const [label, heading] of [
-      ['CRM', 'End-to-End Requirements & Workflow Automation'],
-      ['Awards', '9+ MUN Press Awards, 8.91 GPA & VP Leadership'],
-      ['BI', 'Executive BI Storytelling & SLA Optimization'],
+    const videos = stage.locator('video');
+    const playButton = stage.getByTestId('video-play-button');
+
+    // A phone should expose an explicit user-gesture fallback before playback.
+    await expect(playButton).toBeVisible();
+    await playButton.tap();
+    await expect.poll(
+      () => videos.nth(0).evaluate((video) => !video.paused),
+      { timeout: 10000 }
+    ).toBe(true);
+    await expect(playButton).toBeHidden();
+
+    for (const [label, heading, videoIndex] of [
+      ['CRM', 'End-to-End Requirements & Workflow Automation', 0],
+      ['Awards', '9+ MUN Press Awards, 8.91 GPA & VP Leadership', 0],
+      ['BI', 'Executive BI Storytelling & SLA Optimization', 1],
     ]) {
       await stage.getByRole('button', { name: label }).tap();
       await expect(stage.getByRole('heading', { name: heading })).toBeVisible();
+      await expect.poll(
+        () => videos.nth(videoIndex).evaluate((video) => !video.paused),
+        { timeout: 10000 }
+      ).toBe(true);
     }
 
     const showcase = page.locator('#framing-the-data');
