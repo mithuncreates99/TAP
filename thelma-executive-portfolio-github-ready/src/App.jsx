@@ -521,7 +521,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
           touchStartRef.current = null;
           setIsInsideHero(false);
         }}
-        className={`relative w-full aspect-[4/3] sm:aspect-video rounded-3xl overflow-hidden border border-slate-200/90 bg-[#F8FAFC] shadow-[0_25px_70px_-15px_rgba(15,23,42,0.14)] select-none ${
+        className={`relative w-full touch-pan-y aspect-[4/3] sm:aspect-video rounded-3xl overflow-hidden border border-slate-200/90 bg-[#F8FAFC] shadow-[0_25px_70px_-15px_rgba(15,23,42,0.14)] select-none ${
           isInsideHero ? 'cursor-none' : 'cursor-default'
         }`}
       >
@@ -627,7 +627,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
                 key={zone}
                 type="button"
                 aria-pressed={isSelected}
-                onClick={() => {}
+                onClick={() => {
                   if (dwellTimerRef.current) clearTimeout(dwellTimerRef.current);
                   dwellTimerRef.current = null;
                   pendingZoneRef.current = null;
@@ -887,7 +887,7 @@ export default function App() {
       ====================================================================== */}
       <header className="sticky top-0 z-40 backdrop-blur-md bg-white/90 border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-16 py-3 flex flex-wrap xl:flex-nowrap items-center justify-between gap-x-5 gap-y-2.5">
-          <a href="#interactive-hero" className="flex min-w-0 items-center gap-3 text-left">
+          <a href="#interactive-hero" className="order-1 flex min-w-0 items-center gap-3 text-left">
             <span className="w-9 h-9 shrink-0 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center shadow-sm">
               TP
             </span>
@@ -918,7 +918,7 @@ export default function App() {
 
           <nav
             aria-label="Mobile and tablet navigation"
-            className="grid w-full grid-cols-2 gap-2 border-t border-slate-100 pt-2 sm:grid-cols-4 2xl:hidden"
+            className="order-3 grid w-full grid-cols-2 gap-2 border-t border-slate-100 pt-2 sm:grid-cols-4 2xl:hidden"
           >
             <a href="#interactive-hero" className="flex min-h-11 items-center rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-semibold leading-tight text-slate-700 transition-colors hover:bg-slate-100 sm:text-xs">Interactive Stage</a>
             <a href="#case-studies" className="flex min-h-11 items-center rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-semibold leading-tight text-slate-700 transition-colors hover:bg-slate-100 sm:text-xs">STAR Case Studies</a>
@@ -926,7 +926,7 @@ export default function App() {
             <a href="#framing-the-data" className="flex min-h-11 items-center rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-semibold leading-tight text-slate-700 transition-colors hover:bg-slate-100 sm:text-xs">Framing the Data</a>
           </nav>
 
-          <div className="flex shrink-0 items-center">
+          <div className="order-2 flex shrink-0 items-center">
             <a
               href="./Thelma_Agnes_Peter_CV_ATS.pdf"
               download="Thelma_Agnes_Peter_CV_ATS.pdf"
