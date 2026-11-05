@@ -1,0 +1,82 @@
+name: Build and publish isolated portfolio preview
+
+on:
+  push:
+    branches:
+      - "preview/independent-public-demos"
+    paths:
+      - "thelma-executive-portfolio-github-ready/**"
+      - ".github/workflows/preview-independent-demos.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout preview branch
+        uses: actions/checkout@v4
+        with:
+          path: preview-src
+
+      - name: Checkout current live main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: live-src
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install and build current live site
+        working-directory: live-src/thelma-executive-portfolio-github-ready
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+
+      - name: Install preview dependencies
+        working-directory: preview-src/thelma-executive-portfolio-github-ready
+        run: npm install --no-audit --no-fund
+
+      - name: Build preview
+        working-directory: preview-src/thelma-executive-portfolio-github-ready
+        run: npm run build
+
+      - name: Install Chromium for preview browser tests
+        working-directory: preview-src/thelma-executive-portfolio-github-ready
+        run: npx playwright install --with-deps chromium
+
+      - name: Test the independent demo preview
+        working-directory: preview-src/thelma-executive-portfolio-github-ready
+        run: npm run test:e2e
+
+      - name: Assemble live site plus isolated preview route
+        run: |
+          mkdir -p site/preview
+          cp -a live-src/thelma-executive-portfolio-github-ready/dist/. site/
+          cp -a preview-src/thelma-executive-portfolio-github-ready/dist/. site/preview/
+          printf '%s\n' 'User review preview. This route is separate from the live homepage.' > site/preview/PREVIEW-ONLY.txt
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy isolated preview route
+        id: deployment
+        uses: actions/deploy-pages@v4
