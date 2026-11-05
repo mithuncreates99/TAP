@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, devices } from '@playwright/test';
 
 test('desktop header, navigation, and hero stay in their own layout', async ({ page }) => {
   const pageErrors = [];
