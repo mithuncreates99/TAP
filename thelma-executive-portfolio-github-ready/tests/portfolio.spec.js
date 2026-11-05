@@ -87,3 +87,126 @@ test('mobile layout has no horizontal overflow and stage controls remain usable'
   await stage.getByRole('button', { name: 'CRM' }).click();
   await expect(stage.getByRole('heading', { name: 'End-to-End Requirements & Workflow Automation' })).toBeVisible();
 });
+
+
+test('mobile and tablet widths keep the header, hero, and page inside the viewport', async ({ page }) => {
+  const widths = [320, 360, 375, 390, 414, 430, 640, 768, 820, 1024, 1280, 1440];
+  await page.goto('/');
+  await page.waitForLoadState('domcontentloaded');
+
+  for (const width of widths) {
+    await page.setViewportSize({ width, height: 900 });
+    const layout = await page.evaluate(() => {
+      const rect = (selector) => {
+        const element = document.querySelector(selector);
+        if (!element) return null;
+        const r = element.getBoundingClientRect();
+        return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
+      };
+      const mobileNav = document.querySelector('nav[aria-label="Mobile and tablet navigation"]');
+      const zoneControls = document.querySelector('#interactive-hero video')?.parentElement?.querySelector('div.absolute.top-2');
+      const proofCard = document.querySelector('#interactive-hero video')?.parentElement?.querySelector('div.absolute.bottom-3.left-3.right-3');
+      const ctas = [...document.querySelectorAll('#interactive-hero a[download], #interactive-hero a[href="#case-studies"]')].map((el) => {
+        const r = el.getBoundingClientRect();
+        return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, height: r.height };
+      });
+      return {
+        width: document.documentElement.scrollWidth,
+        viewport: window.innerWidth,
+        header: rect('header'),
+        brand: rect('header a[href="#interactive-hero"]'),
+        cv: rect('header a[download]'),
+        mobileNavVisible: mobileNav ? getComputedStyle(mobileNav).display !== 'none' : false,
+        mobileNav: rect('nav[aria-label="Mobile and tablet navigation"]'),
+        navItems: mobileNav ? [...mobileNav.querySelectorAll('a')].map((el) => {
+          const r = el.getBoundingClientRect();
+          return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, height: r.height };
+        }) : [],
+        zoneControls: rect('#interactive-hero video') ? (() => {
+          const r = zoneControls.getBoundingClientRect();
+          return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, height: r.height };
+        })() : null,
+        proofCard: rect('#interactive-hero video') ? (() => {
+          const r = proofCard.getBoundingClientRect();
+          return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, height: r.height };
+        })() : null,
+        ctas,
+        stage: rect('#interactive-hero video'),
+      };
+    });
+
+    expect(layout.width, `horizontal overflow at ${width}px`).toBeLessThanOrEqual(width);
+    expect(layout.header.right).toBeLessThanOrEqual(width);
+    expect(layout.brand.left).toBeGreaterThanOrEqual(0);
+    expect(layout.cv.right).toBeLessThanOrEqual(width);
+    expect(layout.cv.left).toBeGreaterThanOrEqual(layout.brand.right - 1);
+    expect(Math.abs(layout.cv.top - layout.brand.top)).toBeLessThan(10);
+    expect(layout.mobileNavVisible, `mobile/tablet nav hidden at ${width}px`).toBe(true);
+    expect(layout.mobileNav.top).toBeGreaterThanOrEqual(Math.max(layout.brand.bottom, layout.cv.bottom) - 1);
+    for (const item of layout.navItems) {
+      expect(item.left).toBeGreaterThanOrEqual(0);
+      expect(item.right).toBeLessThanOrEqual(width);
+      expect(item.height).toBeGreaterThanOrEqual(44);
+    }
+    for (const cta of layout.ctas) {
+      expect(cta.left).toBeGreaterThanOrEqual(0);
+      expect(cta.right).toBeLessThanOrEqual(width);
+      expect(cta.height).toBeGreaterThanOrEqual(44);
+    }
+    expect(layout.zoneControls.height).toBeGreaterThanOrEqual(44);
+    expect(layout.proofCard.left).toBeGreaterThanOrEqual(0);
+    expect(layout.proofCard.right).toBeLessThanOrEqual(width);
+    expect(layout.zoneControls.bottom).toBeLessThan(layout.proofCard.top);
+  }
+});
+
+test('mobile navigation scrolls sections below the sticky header', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const mobileNav = page.getByRole('navigation', { name: 'Mobile and tablet navigation' });
+
+  for (const [label, selector] of [
+    ['STAR Case Studies', '#case-studies'],
+    ['Honors & Certifications', '#honors-grid'],
+    ['Framing the Data', '#framing-the-data'],
+  ]) {
+    await mobileNav.getByRole('link', { name: label }).click();
+    await expect(page).toHaveURL(new RegExp(selector.slice(1)));
+    const offset = await page.evaluate((targetSelector) => {
+      const header = document.querySelector('header').getBoundingClientRect();
+      const target = document.querySelector(targetSelector).getBoundingClientRect();
+      return { headerBottom: header.bottom, targetTop: target.top };
+    }, selector);
+    expect(offset.targetTop).toBeGreaterThanOrEqual(offset.headerBottom - 1);
+  }
+});
+
+test('touch-enabled phone can switch all hero zones and tabs with taps', async ({ browser }) => {
+  const phone = devices['iPhone 13'];
+  const context = await browser.newContext({
+    ...phone,
+    baseURL: 'http://127.0.0.1:4173/',
+  });
+  const page = await context.newPage();
+
+  try {
+    await page.goto('/');
+    const stage = page.locator('#interactive-hero');
+    for (const [label, heading] of [
+      ['CRM', 'End-to-End Requirements & Workflow Automation'],
+      ['Awards', '9+ MUN Press Awards, 8.91 GPA & VP Leadership'],
+      ['BI', 'Executive BI Storytelling & SLA Optimization'],
+    ]) {
+      await stage.getByRole('button', { name: label }).tap();
+      await expect(stage.getByRole('heading', { name: heading })).toBeVisible();
+    }
+
+    const showcase = page.locator('#framing-the-data');
+    await showcase.getByRole('button', { name: 'BI' }).tap();
+    await expect(showcase.getByRole('heading', { name: 'Featured BI & Analytics Engineering Portfolio' })).toBeVisible();
+    await showcase.getByRole('button', { name: 'Photo' }).tap();
+    await expect(showcase.getByRole('heading', { name: 'How Award-Winning Photojournalism Elevates Dashboard UX' })).toBeVisible();
+  } finally {
+    await context.close();
+  }
+});
