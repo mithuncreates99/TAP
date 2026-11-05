@@ -271,6 +271,8 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
   });
   const [candidateIndex, setCandidateIndex] = useState({ leftCenter: 0, right: 0 });
   const [showInspector, setShowInspector] = useState(false);
+  const [isStagePlaying, setIsStagePlaying] = useState(false);
+  const [playbackError, setPlaybackError] = useState(false);
 
   // Hysteresis & Dwell-time refs
   const currentZoneRef = useRef('CENTER');
@@ -280,6 +282,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
   const objectUrlsRef = useRef({ leftCenter: null, right: null });
   const userActivatedRef = useRef(false);
   const touchStartRef = useRef(null);
+  const pendingSeekRef = useRef({ leftCenter: null, right: null });
   const shutterTriggeredInCycleRef = useRef(false);
 
   useEffect(() => {
@@ -292,40 +295,61 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
     };
   }, []);
 
-  // Trigger segment playback when zone transitions
-  const playZoneSegment = useCallback(
-    (targetZone) => {
-      userActivatedRef.current = true;
-      shutterTriggeredInCycleRef.current = false;
+  // Request playback synchronously from the user's tap. Do not gate this on
+  // React's loaded flag: iOS may ignore preload hints until play() is requested.
+  const playZoneSegment = useCallback((targetZone) => {
+    userActivatedRef.current = true;
+    shutterTriggeredInCycleRef.current = false;
+    currentZoneRef.current = targetZone;
 
-      if (targetZone === 'LEFT') {
-        setActiveVideoLayer('LEFT_CENTER');
-        const vid = leftCenterVideoRef.current;
-        if (vid && videoLoadStatus.leftCenterLoaded) {
-          if (rightVideoRef.current) rightVideoRef.current.pause();
-          vid.currentTime = VIDEO_TIMESTAMPS.LEFT_START;
-          vid.play().catch(() => {});
-        }
-      } else if (targetZone === 'CENTER') {
-        setActiveVideoLayer('LEFT_CENTER');
-        const vid = leftCenterVideoRef.current;
-        if (vid && videoLoadStatus.leftCenterLoaded) {
-          if (rightVideoRef.current) rightVideoRef.current.pause();
-          vid.currentTime = VIDEO_TIMESTAMPS.CENTER_START;
-          vid.play().catch(() => {});
-        }
-      } else if (targetZone === 'RIGHT') {
-        setActiveVideoLayer('RIGHT');
-        const vid = rightVideoRef.current;
-        if (vid && videoLoadStatus.rightLoaded) {
-          if (leftCenterVideoRef.current) leftCenterVideoRef.current.pause();
-          vid.currentTime = VIDEO_TIMESTAMPS.RIGHT_START;
-          vid.play().catch(() => {});
-        }
+    const isRight = targetZone === 'RIGHT';
+    const video = isRight ? rightVideoRef.current : leftCenterVideoRef.current;
+    const otherVideo = isRight ? leftCenterVideoRef.current : rightVideoRef.current;
+    const videoKey = isRight ? 'right' : 'leftCenter';
+    const startAt = isRight
+      ? VIDEO_TIMESTAMPS.RIGHT_START
+      : targetZone === 'LEFT'
+        ? VIDEO_TIMESTAMPS.LEFT_START
+        : VIDEO_TIMESTAMPS.CENTER_START;
+
+    setActiveVideoLayer(isRight ? 'RIGHT' : 'LEFT_CENTER');
+    setPlaybackError(false);
+    if (otherVideo) otherVideo.pause();
+    if (!video) return;
+
+    // Queue the seek if metadata is not ready yet. Calling play() now, in the
+    // same user gesture, lets mobile Safari begin loading instead of waiting
+    // for a later load event that no longer has user activation.
+    if (video.readyState >= 1) {
+      pendingSeekRef.current[videoKey] = null;
+      try {
+        video.currentTime = startAt;
+      } catch {
+        pendingSeekRef.current[videoKey] = startAt;
       }
-    },
-    [videoLoadStatus.leftCenterLoaded, videoLoadStatus.rightLoaded]
-  );
+    } else {
+      pendingSeekRef.current[videoKey] = startAt;
+      if (video.networkState === 0) video.load();
+    }
+
+    try {
+      const playRequest = video.play();
+      if (playRequest && typeof playRequest.then === 'function') {
+        playRequest
+          .then(() => {
+            setIsStagePlaying(true);
+            setPlaybackError(false);
+          })
+          .catch((error) => {
+            setIsStagePlaying(false);
+            if (error?.name !== 'AbortError') setPlaybackError(true);
+          });
+      }
+    } catch {
+      setIsStagePlaying(false);
+      setPlaybackError(true);
+    }
+  }, []);
 
   // Evaluate horizontal cursor ratio with 4% hysteresis buffer + 150ms dwell check
   const evaluateZoneFromPointer = useCallback(
@@ -539,17 +563,39 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
           preload="auto"
           muted
           playsInline
+          onLoadedMetadata={() => {
+            const video = leftCenterVideoRef.current;
+            const pendingSeek = pendingSeekRef.current.leftCenter;
+            if (video && pendingSeek !== null) {
+              try {
+                video.currentTime = pendingSeek;
+                pendingSeekRef.current.leftCenter = null;
+              } catch {
+                // Keep the pending seek; loadeddata will retry it.
+              }
+            }
+          }}
           onLoadedData={() => {
             setVideoLoadStatus((prev) => ({ ...prev, leftCenterLoaded: true }));
             const video = leftCenterVideoRef.current;
-            if (video) {
-              const zone = currentZoneRef.current;
-              video.currentTime =
-                zone === 'LEFT' ? VIDEO_TIMESTAMPS.LEFT_START : VIDEO_TIMESTAMPS.CENTER_START;
-              if (userActivatedRef.current && zone !== 'RIGHT') {
-                video.play().catch(() => {});
+            const pendingSeek = pendingSeekRef.current.leftCenter;
+            if (video && pendingSeek !== null) {
+              try {
+                video.currentTime = pendingSeek;
+                pendingSeekRef.current.leftCenter = null;
+              } catch {
+                // A later canplay event or a fresh tap can retry playback.
               }
             }
+          }}
+          onPlay={() => {
+            setIsStagePlaying(true);
+            setPlaybackError(false);
+          }}
+          onPause={() => {
+            const leftPlaying = leftCenterVideoRef.current && !leftCenterVideoRef.current.paused;
+            const rightPlaying = rightVideoRef.current && !rightVideoRef.current.paused;
+            setIsStagePlaying(Boolean(leftPlaying || rightPlaying));
           }}
           onTimeUpdate={handleLeftCenterTimeUpdate}
           onError={() => handleVideoError('leftCenter')}
@@ -566,13 +612,39 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
           preload="auto"
           muted
           playsInline
+          onLoadedMetadata={() => {
+            const video = rightVideoRef.current;
+            const pendingSeek = pendingSeekRef.current.right;
+            if (video && pendingSeek !== null) {
+              try {
+                video.currentTime = pendingSeek;
+                pendingSeekRef.current.right = null;
+              } catch {
+                // Keep the pending seek; loadeddata will retry it.
+              }
+            }
+          }}
           onLoadedData={() => {
             setVideoLoadStatus((prev) => ({ ...prev, rightLoaded: true }));
             const video = rightVideoRef.current;
-            if (video && userActivatedRef.current && currentZoneRef.current === 'RIGHT') {
-              video.currentTime = VIDEO_TIMESTAMPS.RIGHT_START;
-              video.play().catch(() => {});
+            const pendingSeek = pendingSeekRef.current.right;
+            if (video && pendingSeek !== null) {
+              try {
+                video.currentTime = pendingSeek;
+                pendingSeekRef.current.right = null;
+              } catch {
+                // A fresh tap can retry if the browser paused loading.
+              }
             }
+          }}
+          onPlay={() => {
+            setIsStagePlaying(true);
+            setPlaybackError(false);
+          }}
+          onPause={() => {
+            const leftPlaying = leftCenterVideoRef.current && !leftCenterVideoRef.current.paused;
+            const rightPlaying = rightVideoRef.current && !rightVideoRef.current.paused;
+            setIsStagePlaying(Boolean(leftPlaying || rightPlaying));
           }}
           onTimeUpdate={handleRightTimeUpdate}
           onError={() => handleVideoError('right')}
@@ -580,6 +652,20 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
             activeVideoLayer === 'RIGHT' ? 'opacity-100 z-0' : 'opacity-0 -z-10'
           }`}
         />
+
+        {/* Explicit playback control: mobile browsers can defer or block inline autoplay. */}
+        {!isStagePlaying && (
+          <button
+            type="button"
+            data-testid="video-play-button"
+            aria-label={playbackError ? 'Tap to retry video animation' : 'Tap to play video animation'}
+            onClick={() => playZoneSegment(currentZoneRef.current)}
+            className="absolute left-1/2 top-1/2 z-25 inline-flex min-h-12 -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full border border-white/70 bg-slate-950/85 px-5 py-3 text-sm font-semibold text-white shadow-xl backdrop-blur-md transition hover:bg-slate-900 focus:outline-none focus:ring-4 focus:ring-amber-300"
+          >
+            <Play className="h-4 w-4 fill-current text-amber-400" />
+            {playbackError ? 'Tap to retry animation' : 'Tap to play animation'}
+          </button>
+        )}
 
         {/* Camera Flash Pulse Overlay */}
         {shutterFlashKey > 0 && (
