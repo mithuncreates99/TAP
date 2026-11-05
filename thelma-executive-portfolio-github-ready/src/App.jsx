@@ -874,7 +874,7 @@ export default function App() {
             </span>
           </a>
 
-          <nav aria-label="Primary navigation" className="hidden xl:flex flex-1 items-center justify-center gap-x-5 2xl:gap-x-7 text-xs font-semibold text-slate-600">
+          <nav aria-label="Primary navigation" className="hidden 2xl:flex flex-1 items-center justify-center gap-x-5 text-xs font-semibold text-slate-600">
             <a href="#interactive-hero" className="whitespace-nowrap hover:text-slate-900 transition-colors">
               Interactive Stage
             </a>
