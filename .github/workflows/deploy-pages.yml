@@ -45,6 +45,38 @@ jobs:
         working-directory: thelma-executive-portfolio-github-ready
         run: npm run test:e2e
 
+      - name: Checkout independent portfolio preview
+        uses: actions/checkout@v4
+        with:
+          ref: preview/independent-public-demos
+          path: preview-src
+
+      - name: Build and test the independent preview
+        working-directory: preview-src/thelma-executive-portfolio-github-ready
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install chromium
+          npm run build
+          npm run test:e2e
+
+      - name: Add the no-index preview route to the Pages artifact
+        run: |
+          mkdir -p thelma-executive-portfolio-github-ready/dist/preview
+          cp -a preview-src/thelma-executive-portfolio-github-ready/dist/. thelma-executive-portfolio-github-ready/dist/preview/
+          python - <<'PY'
+          from pathlib import Path
+
+          page = Path("thelma-executive-portfolio-github-ready/dist/preview/index.html")
+          html = page.read_text()
+          marker = '<meta name="robots" content="noindex, nofollow" />'
+          if marker not in html:
+              html = html.replace("</head>", f"    {marker}\\n  </head>")
+          page.write_text(html)
+          Path("thelma-executive-portfolio-github-ready/dist/preview/PREVIEW-ONLY.txt").write_text(
+              "Review-only portfolio preview. The live homepage remains at /TAP/.\\n"
+          )
+          PY
+
       - name: Checkout the pre-redesign portfolio for the classic route
         uses: actions/checkout@v4
         with:
