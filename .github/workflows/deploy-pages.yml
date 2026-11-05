@@ -39,7 +39,7 @@ jobs:
 
       - name: Install Chromium for browser tests
         working-directory: thelma-executive-portfolio-github-ready
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
 
       - name: Run portfolio browser tests
         working-directory: thelma-executive-portfolio-github-ready
