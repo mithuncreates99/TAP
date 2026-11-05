@@ -66,7 +66,7 @@ test('mobile layout has no horizontal overflow and stage controls remain usable'
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'CV' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'CV', exact: true })).toBeVisible();
 
   const positions = await page.evaluate(() => {
     const header = document.querySelector('header').getBoundingClientRect();
@@ -106,7 +106,7 @@ test('mobile and tablet widths keep the header, hero, and page inside the viewpo
       const mobileNav = document.querySelector('nav[aria-label="Mobile and tablet navigation"]');
       const zoneControls = document.querySelector('#interactive-hero video')?.parentElement?.querySelector('div.absolute.top-2');
       const proofCard = document.querySelector('#interactive-hero video')?.parentElement?.querySelector('div.absolute.bottom-3.left-3.right-3');
-      const ctas = [...document.querySelectorAll('#interactive-hero a[download], #interactive-hero a[href="#case-studies"]')].map((el) => {
+      const ctas = [...document.querySelectorAll('[data-testid="hero-ctas"] a')].map((el) => {
         const r = el.getBoundingClientRect();
         return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, height: r.height };
       });
