@@ -144,7 +144,7 @@ function ButterflyCursor({ containerRef, isInsideHero, activeZone, isCapturing }
     };
 
     container.addEventListener('mousemove', handleMouseMove, { passive: true });
-    container.addEventListener(' pointermove', handleMouseMove, { passive: true });
+    container.addEventListener('pointermove', handleMouseMove, { passive: true });
     container.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     let rafId;
@@ -426,6 +426,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
   };
 
   const triggerShutterCapture = (zoneKey) => {
+    shutterTriggeredInCycleRef.current = true;
     setIsCapturing(true);
     setShutterFlashKey((prev) => prev + 1);
     onSelectProofCard(zoneKey);
@@ -565,7 +566,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
         <div
           onMouseEnter={() => setIsInsideHero(false)}
           onMouseLeave={() => setIsInsideHero(true)}
-          className="cursor-auto absolute top-4 left-4 z-30 flex flex-wrap items-center gap-1.5 bg-white/80 backdrop-blur-md p-1.5 rounded-xl border border-slate-200/80 shadow-sm"
+          className="cursor-auto absolute top-2 left-2 sm:top-4 sm:left-4 z-30 flex flex-wrap items-center gap-1 bg-white/85 backdrop-blur-md p-1 sm:p-1.5 rounded-xl border border-slate-200/80 shadow-sm"
         >
           {(['LEFT', 'CENTER', 'RIGHT']).map((zone) => {
             const isSelected = activeZone === zone;
@@ -580,7 +581,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
                   playZoneSegment(zone);
                   triggerShutterCapture(zone);
                 }}
-                className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-xs font-semibold transition-all flex items-center gap-1.5 ${
                   isSelected
                     ? 'bg-slate-900 text-white shadow-sm'
                     : 'text-slate-700 hover:bg-slate-100'
@@ -591,7 +592,10 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
                     isUnlocked ? 'bg-emerald-500' : 'bg-amber-400'
                   }`}
                 />
-                <span>
+                <span className="sm:hidden">
+                  {zone === 'LEFT' ? 'CRM' : zone === 'CENTER' ? 'Awards' : 'BI'}
+                </span>
+                <span className="hidden sm:inline">
                   {zone === 'LEFT'
                     ? 'Left: CRM & Automation'
                     : zone === 'CENTER'
@@ -607,7 +611,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
         <div
           onMouseEnter={() => setIsInsideHero(false)}
           onMouseLeave={() => setIsInsideHero(true)}
-          className="cursor-auto absolute top-4 right-4 z-30 flex items-center gap-2"
+          className="cursor-auto absolute top-2 right-2 sm:top-4 sm:right-4 z-30 hidden sm:flex items-center gap-2"
         >
           <button
             type="button"
@@ -624,7 +628,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
           <div
             onMouseEnter={() => setIsInsideHero(false)}
             onMouseLeave={() => setIsInsideHero(true)}
-            className={`cursor-auto absolute z-30 bottom-4 left-4 max-w-md rounded-2xl p-4 backdrop-blur-md border shadow-xl transition-all duration-300 ${activeProofCard.accent}`}
+            className={`cursor-auto absolute z-30 bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-auto sm:max-w-md rounded-xl sm:rounded-2xl p-2.5 sm:p-4 backdrop-blur-md border shadow-xl transition-all duration-300 ${activeProofCard.accent}`}
           >
             <div className="flex items-center justify-between gap-2 mb-1.5">
               <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-slate-500">
@@ -639,7 +643,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
             <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-snug">
               {activeProofCard.title}
             </h3>
-            <p className="mt-1 text-xs text-slate-600 leading-relaxed">
+            <p className="mt-1 hidden sm:block text-xs text-slate-600 leading-relaxed">
               {activeProofCard.description}
             </p>
             <div className="mt-2.5 pt-2 border-t border-slate-200/80 flex items-center justify-between text-[11px] font-mono font-semibold text-slate-800">
