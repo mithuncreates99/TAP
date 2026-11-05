@@ -53,20 +53,8 @@ export const VIDEO_TIMESTAMPS = {
 
 // Multi-path Git auto-discovery candidates (supports root, relative GitHub Pages, and original Gemini filenames)
 export const GIT_VIDEO_CANDIDATES = {
-  leftCenter: [
-    './assets/hero_left_center.mp4',
-    '/assets/hero_left_center.mp4',
-    './assets/gemini_generated_video_b0465794.mp4',
-    '/assets/gemini_generated_video_b0465794.mp4',
-    'assets/hero_left_center.mp4',
-  ],
-  right: [
-    './assets/hero_right.mp4',
-    '/assets/hero_right.mp4',
-    './assets/gemini_generated_video_5905eec7.mp4',
-    '/assets/gemini_generated_video_5905eec7.mp4',
-    'assets/hero_right.mp4',
-  ],
+  leftCenter: ['./assets/hero_left_center.mp4', './assets/gemini_generated_video_b0465794.mp4'],
+  right: ['./assets/hero_right.mp4', './assets/gemini_generated_video_5905eec7.mp4'],
 };
 
 const PROOF_CARDS = {
@@ -288,11 +276,25 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
   const currentZoneRef = useRef('CENTER');
   const pendingZoneRef = useRef(null);
   const dwellTimerRef = useRef(null);
+  const captureTimerRef = useRef(null);
+  const objectUrlsRef = useRef({ leftCenter: null, right: null });
+  const userActivatedRef = useRef(false);
   const shutterTriggeredInCycleRef = useRef(false);
+
+  useEffect(() => {
+    return () => {
+      if (dwellTimerRef.current) clearTimeout(dwellTimerRef.current);
+      if (captureTimerRef.current) clearTimeout(captureTimerRef.current);
+      Object.values(objectUrlsRef.current).forEach((url) => {
+        if (url) URL.revokeObjectURL(url);
+      });
+    };
+  }, []);
 
   // Trigger segment playback when zone transitions
   const playZoneSegment = useCallback(
     (targetZone) => {
+      userActivatedRef.current = true;
       shutterTriggeredInCycleRef.current = false;
 
       if (targetZone === 'LEFT') {
@@ -330,6 +332,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
       const stage = stageRef.current;
       if (!stage) return;
       const rect = stage.getBoundingClientRect();
+      if (!rect.width) return;
       const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
 
       const current = currentZoneRef.current;
@@ -430,7 +433,11 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
     setIsCapturing(true);
     setShutterFlashKey((prev) => prev + 1);
     onSelectProofCard(zoneKey);
-    setTimeout(() => setIsCapturing(false), 520);
+    if (captureTimerRef.current) clearTimeout(captureTimerRef.current);
+    captureTimerRef.current = setTimeout(() => {
+      setIsCapturing(false);
+      captureTimerRef.current = null;
+    }, 520);
   };
 
   // Fallback path cycling if a candidate path 404s
@@ -441,6 +448,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
         setCandidateIndex((prev) => ({ ...prev, leftCenter: nextIdx }));
         setVideoLoadStatus((prev) => ({
           ...prev,
+          leftCenterLoaded: false,
           leftCenterSrc: GIT_VIDEO_CANDIDATES.leftCenter[nextIdx],
         }));
       }
@@ -450,6 +458,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
         setCandidateIndex((prev) => ({ ...prev, right: nextIdx }));
         setVideoLoadStatus((prev) => ({
           ...prev,
+          rightLoaded: false,
           rightSrc: GIT_VIDEO_CANDIDATES.right[nextIdx],
         }));
       }
@@ -459,11 +468,15 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
   // Optional local drag-and-drop MP4 override
   const handleManualFileBind = (which, file) => {
     if (!file) return;
+    const previousUrl = objectUrlsRef.current[which];
+    if (previousUrl) URL.revokeObjectURL(previousUrl);
+
     const url = URL.createObjectURL(file);
+    objectUrlsRef.current[which] = url;
     if (which === 'leftCenter') {
-      setVideoLoadStatus((prev) => ({ ...prev, leftCenterSrc: url, leftCenterLoaded: true }));
+      setVideoLoadStatus((prev) => ({ ...prev, leftCenterSrc: url, leftCenterLoaded: false }));
     } else {
-      setVideoLoadStatus((prev) => ({ ...prev, rightSrc: url, rightLoaded: true }));
+      setVideoLoadStatus((prev) => ({ ...prev, rightSrc: url, rightLoaded: false }));
     }
   };
 
@@ -472,12 +485,16 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
       {/* Main 16:9 Interactive Studio Stage */}
       <div
         ref={stageRef}
-        onMouseEnter={() => setIsInsideHero(true)}
+        onMouseEnter={() => {
+          setIsInsideHero(true);
+          if (!userActivatedRef.current) playZoneSegment(currentZoneRef.current);
+        }}
         onMouseLeave={() => setIsInsideHero(false)}
         onMouseMove={(e) => evaluateZoneFromPointer(e.clientX)}
         onTouchMove={(e) => {
           if (e.touches && e.touches[0]) {
             setIsInsideHero(true);
+            if (!userActivatedRef.current) playZoneSegment(currentZoneRef.current);
             evaluateZoneFromPointer(e.touches[0].clientX);
           }
         }}
@@ -501,8 +518,14 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
           playsInline
           onLoadedData={() => {
             setVideoLoadStatus((prev) => ({ ...prev, leftCenterLoaded: true }));
-            if (leftCenterVideoRef.current) {
-              leftCenterVideoRef.current.currentTime = VIDEO_TIMESTAMPS.CENTER_START;
+            const video = leftCenterVideoRef.current;
+            if (video) {
+              const zone = currentZoneRef.current;
+              video.currentTime =
+                zone === 'LEFT' ? VIDEO_TIMESTAMPS.LEFT_START : VIDEO_TIMESTAMPS.CENTER_START;
+              if (userActivatedRef.current && zone !== 'RIGHT') {
+                video.play().catch(() => {});
+              }
             }
           }}
           onTimeUpdate={handleLeftCenterTimeUpdate}
@@ -522,6 +545,11 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
           playsInline
           onLoadedData={() => {
             setVideoLoadStatus((prev) => ({ ...prev, rightLoaded: true }));
+            const video = rightVideoRef.current;
+            if (video && userActivatedRef.current && currentZoneRef.current === 'RIGHT') {
+              video.currentTime = VIDEO_TIMESTAMPS.RIGHT_START;
+              video.play().catch(() => {});
+            }
           }}
           onTimeUpdate={handleRightTimeUpdate}
           onError={() => handleVideoError('right')}
