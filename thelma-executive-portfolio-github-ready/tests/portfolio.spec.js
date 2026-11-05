@@ -40,8 +40,10 @@ test('interactive stage, case studies, and showcase tabs respond to clicks', asy
 
   const showcase = page.locator('#framing-the-data');
   await showcase.getByRole('button', { name: 'CRM Workflow Simulator' }).click();
+  await showcase.getByLabel('Estimated budget (€)').fill('80000');
+  await showcase.getByLabel('Lead source').selectOption('Referral');
   await showcase.getByRole('button', { name: 'Run routing simulation' }).click();
-  await expect(showcase.getByRole('heading', { name: 'Priority queue' })).toBeVisible();
+  await expect(showcase.getByText('Priority queue', { exact: true })).toBeVisible();
   await showcase.getByRole('button', { name: 'Operations Analytics' }).click();
   await expect(showcase.getByRole('heading', { name: 'Synthetic Operations Analytics Dashboard' })).toBeVisible();
   await showcase.getByLabel('Region').selectOption('East');
