@@ -1049,10 +1049,10 @@ export default function App() {
               {/* Competency Pills */}
               <div className="flex flex-wrap items-center gap-2 pt-1">
                 {[
-                  'CRM & ServiceNow Architecture',
+                  'CRM & Service Workflow Analysis',
                   'Business Analysis (BRD/FRD)',
                   'SQL, Python & Power BI',
-                  'Process Automation (Resolve)',
+                  'Process Improvement & Automation',
                   '9x Award-Winning Photographer',
                 ].map((pill) => (
                   <span
@@ -1094,7 +1094,7 @@ export default function App() {
         </section>
 
         {/* ===================================================================
-            SECTION 1: STAR-METHOD CRM & BUSINESS ANALYSIS CASE STUDIES
+            SECTION 1: PUBLIC-SAFE PROFESSIONAL EXPERIENCE
         ==================================================================== */}
         <section id="case-studies" className="space-y-8 scroll-mt-44 sm:scroll-mt-32">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-5">
