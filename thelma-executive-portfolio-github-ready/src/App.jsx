@@ -604,6 +604,9 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
                 key={zone}
                 type="button"
                 onClick={() => {
+                  if (dwellTimerRef.current) clearTimeout(dwellTimerRef.current);
+                  dwellTimerRef.current = null;
+                  pendingZoneRef.current = null;
                   currentZoneRef.current = zone;
                   setActiveZone(zone);
                   playZoneSegment(zone);
