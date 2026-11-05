@@ -28,12 +28,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: thelma-executive-portfolio-github-ready/package.json
 
       - name: Install dependencies
         working-directory: thelma-executive-portfolio-github-ready
-        run: npm install
+        run: npm install --no-audit --no-fund
 
       - name: Build
         working-directory: thelma-executive-portfolio-github-ready
@@ -41,6 +39,8 @@ jobs:
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
