@@ -662,11 +662,11 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
             className={`cursor-auto absolute z-30 bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-auto sm:max-w-md rounded-xl sm:rounded-2xl p-2.5 sm:p-4 backdrop-blur-md border shadow-xl transition-all duration-300 ${activeProofCard.accent}`}
           >
             <div className="flex items-center justify-between gap-2 mb-1.5">
-              <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-slate-500">
+              <span className="hidden sm:inline text-[10px] font-mono uppercase tracking-wider font-bold text-slate-500">
                 {activeProofCard.zoneLabel}
               </span>
               <span
-                className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${activeProofCard.pillColor}`}
+                className={`hidden sm:inline-flex text-[11px] font-semibold px-2 py-0.5 rounded-full ${activeProofCard.pillColor}`}
               >
                 {activeProofCard.badge}
               </span>
@@ -677,7 +677,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
             <p className="mt-1 hidden sm:block text-xs text-slate-600 leading-relaxed">
               {activeProofCard.description}
             </p>
-            <div className="mt-2.5 pt-2 border-t border-slate-200/80 flex items-center justify-between text-[11px] font-mono font-semibold text-slate-800">
+            <div className="mt-2.5 pt-2 border-t border-slate-200/80 hidden sm:flex items-center justify-between text-[11px] font-mono font-semibold text-slate-800">
               <span>{activeProofCard.metric}</span>
               <a
                 href="#case-studies"
@@ -692,7 +692,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
         {/* Bottom-Right Watermark Masking Badge (Non-destructive crop + Telemetry Pill) */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute bottom-3 right-3 z-30 flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900/90 backdrop-blur-md text-white border border-white/15 shadow-lg"
+          className="pointer-events-none absolute bottom-3 right-3 z-30 hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900/90 backdrop-blur-md text-white border border-white/15 shadow-lg"
         >
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span className="font-mono text-[11px] tracking-wider uppercase">
