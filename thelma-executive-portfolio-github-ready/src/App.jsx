@@ -772,7 +772,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
             onMouseLeave={() => setIsInsideHero(true)}
             className={`cursor-auto absolute z-30 bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-auto sm:max-w-md rounded-xl sm:rounded-2xl p-2.5 sm:p-4 backdrop-blur-md border shadow-xl transition-all duration-300 ${activeProofCard.accent}`}
           >
-            <div className="flex items-center justify-between gap-2 mb-1.5">
+            <div className="hidden lg:flex items-center justify-between gap-2 mb-1.5">
               <span className="hidden sm:inline text-[10px] font-mono uppercase tracking-wider font-bold text-slate-500">
                 {activeProofCard.zoneLabel}
               </span>
@@ -785,10 +785,10 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
             <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-snug">
               {activeProofCard.title}
             </h3>
-            <p className="mt-1 hidden sm:block text-xs text-slate-600 leading-relaxed">
+            <p className="mt-1 hidden lg:block text-xs text-slate-600 leading-relaxed">
               {activeProofCard.description}
             </p>
-            <div className="mt-2.5 pt-2 border-t border-slate-200/80 hidden sm:flex items-center justify-between text-[11px] font-mono font-semibold text-slate-800">
+            <div className="mt-2.5 pt-2 border-t border-slate-200/80 hidden lg:flex items-center justify-between text-[11px] font-mono font-semibold text-slate-800">
               <span>{activeProofCard.metric}</span>
               <a
                 href="#framing-the-data"
