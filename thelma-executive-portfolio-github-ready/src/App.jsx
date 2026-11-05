@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { CrmWorkflowDemo, OperationsAnalyticsDemo } from './PortfolioDemos';
 import {
   Camera,
   Sparkles,
@@ -60,19 +61,19 @@ export const GIT_VIDEO_CANDIDATES = {
 const PROOF_CARDS = {
   LEFT: {
     id: 'LEFT',
-    zoneLabel: 'LEFT ZONE CAPTURE • CRM & AUTOMATION',
-    badge: '📊 CRM & Pipeline Architecture',
-    title: 'End-to-End Requirements & Workflow Automation',
+    zoneLabel: 'INDEPENDENT DEMO • CRM WORKFLOW',
+    badge: 'Synthetic lead data • Personal build',
+    title: 'CRM Lead Routing & SLA Simulator',
     description:
-      'Translated complex enterprise business requirements (BRD/FRD) into automated ServiceNow & Resolve workflows at KLA, cutting manual L1 system interface triage and accelerating SLA turnaround.',
-    metric: 'Automated L1 Triage • SQL & Python Telemetry',
+      'A self-directed demonstration of lead capture, qualification, ownership routing and follow-up logic. It uses fictional contacts and runs locally in the browser; it is not connected to an employer system.',
+    metric: 'Fictional records • No employer data or systems',
     accent: 'border-blue-500/40 bg-white/85 text-slate-900',
     pillColor: 'bg-blue-600 text-white',
   },
   CENTER: {
     id: 'CENTER',
-    zoneLabel: 'CENTER ZONE CAPTURE • HONORS & DISTINCTION',
-    badge: '🏆 Multi-Award Winner & Academic Distinction',
+    zoneLabel: 'PERSONAL PROFILE • HONORS & DISTINCTION',
+    badge: 'Academic & Creative Recognition',
     title: '9+ MUN Press Awards, 8.91 GPA & VP Leadership',
     description:
       'B.Tech in Computer Science & Business Systems (8.91/10 GPA, SRM IST), IIBA AI-Powered Business Analyst Professional, Vice President of Camogenics & CSE, and 9x MUN Photojournalism Award Winner.',
@@ -82,12 +83,12 @@ const PROOF_CARDS = {
   },
   RIGHT: {
     id: 'RIGHT',
-    zoneLabel: 'RIGHT ZONE CAPTURE • VISUAL & BI PRECISION',
-    badge: '📸 Visual & Analytical Precision',
-    title: 'Executive BI Storytelling & SLA Optimization',
+    zoneLabel: 'INDEPENDENT DEMO • OPERATIONS ANALYTICS',
+    badge: 'Synthetic operations data • Personal build',
+    title: 'Retail Operations & Fulfilment Dashboard',
     description:
-      'Reduced IT asset downtime by 15% across 500+ assets and boosted reporting efficiency by 30% at Stellantis; orchestrates 15+ partner SLAs at Bible Tours using Power BI & Tableau.',
-    metric: '-15% Downtime • +30% Reporting Efficiency',
+      'Explore fictional order, margin and delivery data through regional filters, KPI summaries and SLA trends. This analytics demo was designed independently for this portfolio.',
+    metric: 'Synthetic sample data • Independent analysis',
     accent: 'border-emerald-500/40 bg-white/85 text-slate-900',
     pillColor: 'bg-emerald-600 text-white',
   },
@@ -738,10 +739,10 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
                 </span>
                 <span className="hidden sm:inline">
                   {zone === 'LEFT'
-                    ? 'Left: CRM & Automation'
+                    ? 'Left: CRM Workflow Demo'
                     : zone === 'CENTER'
                     ? 'Center: 9+ Awards & GPA'
-                    : 'Right: BI & Photography'}
+                    : 'Right: Independent Analytics Demo'}
                 </span>
               </button>
             );
@@ -790,10 +791,10 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
             <div className="mt-2.5 pt-2 border-t border-slate-200/80 hidden sm:flex items-center justify-between text-[11px] font-mono font-semibold text-slate-800">
               <span>{activeProofCard.metric}</span>
               <a
-                href="#case-studies"
+                href="#framing-the-data"
                 className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 font-sans font-bold"
               >
-                Inspect Proof <ArrowUpRight className="w-3.5 h-3.5" />
+                Explore Demo <ArrowUpRight className="w-3.5 h-3.5" />
               </a>
             </div>
           </div>
@@ -806,7 +807,7 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
         >
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span className="font-mono text-[11px] tracking-wider uppercase">
-            ISO 100 • f/1.4 • LIVE KPI VIEW
+            ISO 100 • f/1.4 • SYNTHETIC DEMO VIEW
           </span>
         </div>
 
@@ -865,58 +866,55 @@ function HeroVideoStage({ onSelectProofCard, activeProofCard, unlockedZones }) {
 // ============================================================================
 // STEP 5: BELOW-THE-FOLD RECRUITER CONVERSION SECTIONS
 // ============================================================================
-const CASE_STUDIES = [
+const PROFESSIONAL_EXPERIENCE = [
   {
     id: 'kla-automation',
-    company: 'KLA (Global Semiconductor Equipment)',
+    company: 'KLA',
     role: 'Automation & Business Process Analyst — IT Process Automation',
     period: 'Oct 2024 – Mar 2025 • Chennai, India',
-    badge: 'ServiceNow & Resolve Automation',
-    accentColor: 'blue',
-    headlineMetric: 'Automated L1 System Interface Triage',
+    badge: 'Business analysis & process improvement',
+    headlineMetric: 'Requirements • Workflow improvement • Operational analysis',
     problem:
-      'High-volume first-level support tickets for system interface errors required repetitive manual triage, delaying root-cause escalation and consuming engineering bandwidth.',
+      'Supported IT service operations in a complex technical environment where recurring issues called for clear requirements, consistent triage and better operational visibility.',
     requirements:
-      'Elicit end-to-end business requirements (BRD/FRD) with IT infrastructure and support stakeholders to standardize error classification and automate L1 resolution workflows.',
+      'Worked with business and technical stakeholders to understand process pain points, document business and functional requirements, and clarify expected outcomes.',
     solution:
-      'Engineered automated ServiceNow and Resolve workflows coupled with SQL and Python operational trend dashboards to pinpoint recurring interface bottlenecks.',
+      'Contributed to process-improvement and automation activities, using service-management tools and data analysis to support more consistent operations.',
     roi: [
-      'Eliminated repetitive manual L1 triage steps for recurring system interface errors',
-      'Built SQL & Python operational trend dashboards for proactive root-cause discovery',
-      'Accelerated service efficiency and end-to-end issue turnaround across support queues',
+      'Translated stakeholder needs into structured BRD and FRD documentation',
+      'Supported service-management and workflow improvement initiatives',
+      'Applied SQL and Python analysis to operational questions',
     ],
     architectureSteps: [
-      'System Interface Error Logged (Event Trigger)',
-      'ServiceNow / Resolve Automated Rule Ingestion',
-      'Python & SQL Log Pattern Classification',
-      'Automated L1 Resolution or Context-Rich L2 Escalation',
-      'Executive Turnaround KPI Telemetry Dashboard',
+      'Stakeholder discovery and requirements gathering',
+      'Business process documentation and validation',
+      'Cross-functional coordination on improvement actions',
+      'Operational reporting and outcome review',
     ],
   },
   {
     id: 'stellantis-infra-bi',
-    company: 'Stellantis (Global Automotive Group)',
+    company: 'Stellantis',
     role: 'Asset Manager (IT Infrastructure) & Market Research Analyst',
     period: 'Jun 2023 – Jun 2024 • Chennai, India',
-    badge: '500+ IT Assets • Power BI & Observability',
-    accentColor: 'emerald',
-    headlineMetric: '-15% Downtime • +30% Team Efficiency',
+    badge: 'IT asset management & reporting',
+    headlineMetric: 'IT operations • Asset coordination • BI reporting',
     problem:
-      'Distributed infrastructure across 500+ IT assets needed tighter cross-functional incident tracking, while executive leadership required unified qualitative and quantitative market benchmarks.',
+      'Worked in an enterprise IT environment that required dependable asset coordination, incident follow-up and clear operational reporting for stakeholders.',
     requirements:
-      'Unify telemetry across Site24x7, Applications Manager, and OpManager, and synthesize 100+ market research data points into storyboarded executive Power BI decks.',
+      'Coordinated with technical teams to maintain visibility of asset issues, support incident follow-up and prepare useful reporting for operational decisions.',
     solution:
-      'Owned end-to-end asset issue tracking across cross-functional engineering teams and delivered 10+ monthly performance and competitive benchmarking reports in Power BI and Excel.',
+      'Contributed to infrastructure operations and market-research reporting, using Power BI and Excel to organise information for stakeholder review.',
     roi: [
-      'Reduced infrastructure downtime by 15% across 500+ enterprise IT assets',
-      'Delivered 10+ monthly performance reports, improving team operational efficiency by 30%',
-      'Synthesized 100+ qualitative & quantitative market data points into leadership Power BI decks',
+      'Coordinated asset issue tracking and follow-up across technical stakeholders',
+      'Supported infrastructure monitoring and operational reporting',
+      'Prepared Power BI and Excel analysis for leadership and market-research use',
     ],
     architectureSteps: [
-      'Site24x7 + OpManager + Applications Manager Telemetry',
-      'Cross-Functional Issue Triage & Asset SLA Ownership (500+ Assets)',
-      'Power BI & Advanced Excel Data Modeling (100+ Indicators)',
-      'Storyboarded Competitive Landscape & Executive KPI Decks',
+      'Asset and incident visibility',
+      'Stakeholder coordination and issue follow-up',
+      'Data consolidation and validation',
+      'Management reporting and recommendations',
     ],
   },
   {
@@ -924,25 +922,24 @@ const CASE_STUDIES = [
     company: 'Bible Tours',
     role: 'Operations Executive — Client & Order Management',
     period: 'Mar 2025 – Present • Chennai, India',
-    badge: '15+ Partner SLAs & Root-Cause Analysis',
-    accentColor: 'amber',
-    headlineMetric: 'End-to-End Dispute & SLA Governance',
+    badge: 'Client operations & service delivery',
+    headlineMetric: 'Client support • SLA coordination • Dispute resolution',
     problem:
-      'Multi-vendor travel operations across 15+ hotel, transport, and regional partners created complex SLA dependencies and dispute resolution bottlenecks.',
+      'Supported travel operations involving customer requests and multiple service partners, where timely communication and clear ownership were important to service delivery.',
     requirements:
-      'Establish centralized dispute logging, root-cause analysis (RCA), vendor SLA scorecards, and multi-channel client resolution (email, phone, live chat).',
+      'Helped coordinate client and partner communication, track open requests, document service issues and support timely escalation and closure.',
     solution:
-      'Owned the complete dispute lifecycle from logging and RCA to vendor escalation and closure while tracking real-time partner SLA performance against contractual targets.',
+      'Managed day-to-day order and dispute follow-up across service channels while keeping stakeholders informed about status and next actions.',
     roi: [
-      'Coordinated 15+ vendor, hotel, and transport partners against strict SLA KPIs',
-      'Owned end-to-end dispute governance: logging, root-cause analysis, escalation, and closure',
-      'Maintained high-velocity order-to-delivery execution across email, phone, and live chat',
+      'Coordinated customer and partner requests across the service lifecycle',
+      'Supported issue triage, root-cause notes and escalation follow-up',
+      'Handled client communication across email, phone and live chat',
     ],
     architectureSteps: [
-      'Multi-Channel Client & Order Intake (Email / Live Chat / Phone)',
-      '15+ Vendor, Hotel & Transport Partner SLA Tracker',
-      'Structured Root-Cause Analysis (RCA) & Escalation Matrix',
-      'Verified Closure & Continuous Service Improvement Loop',
+      'Client request intake and clarification',
+      'Partner coordination and status tracking',
+      'Issue documentation and escalation follow-up',
+      'Closure confirmation and service review',
     ],
   },
 ];
@@ -955,7 +952,7 @@ export default function App() {
     'stellantis-infra-bi': 'summary',
     'bible-tours-ops': 'summary',
   });
-  const [activeShowcaseTab, setActiveShowcaseTab] = useState('dual');
+  const [activeShowcaseTab, setActiveShowcaseTab] = useState('crm');
 
   const handleSelectProofCard = useCallback((zoneKey) => {
     setSelectedZoneKey(zoneKey);
@@ -992,13 +989,13 @@ export default function App() {
               Interactive Stage
             </a>
             <a href="#case-studies" className="whitespace-nowrap hover:text-slate-900 transition-colors">
-              STAR Case Studies
+              Professional Experience
             </a>
             <a href="#honors-grid" className="whitespace-nowrap hover:text-slate-900 transition-colors">
               Honors & Certifications
             </a>
             <a href="#framing-the-data" className="whitespace-nowrap hover:text-slate-900 transition-colors">
-              Framing the Data
+              Independent Demos
             </a>
           </nav>
 
@@ -1007,9 +1004,9 @@ export default function App() {
             className="order-3 grid w-full grid-cols-2 gap-2 border-t border-slate-100 pt-2 sm:grid-cols-4 2xl:hidden"
           >
             <a href="#interactive-hero" className="flex min-h-11 items-center rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-semibold leading-tight text-slate-700 transition-colors hover:bg-slate-100 sm:text-xs">Interactive Stage</a>
-            <a href="#case-studies" className="flex min-h-11 items-center rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-semibold leading-tight text-slate-700 transition-colors hover:bg-slate-100 sm:text-xs">STAR Case Studies</a>
+            <a href="#case-studies" className="flex min-h-11 items-center rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-semibold leading-tight text-slate-700 transition-colors hover:bg-slate-100 sm:text-xs">Professional Experience</a>
             <a href="#honors-grid" className="flex min-h-11 items-center rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-semibold leading-tight text-slate-700 transition-colors hover:bg-slate-100 sm:text-xs">Honors & Certifications</a>
-            <a href="#framing-the-data" className="flex min-h-11 items-center rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-semibold leading-tight text-slate-700 transition-colors hover:bg-slate-100 sm:text-xs">Framing the Data</a>
+            <a href="#framing-the-data" className="flex min-h-11 items-center rounded-lg bg-slate-50 px-3 py-2 text-[11px] font-semibold leading-tight text-slate-700 transition-colors hover:bg-slate-100 sm:text-xs">Independent Demos</a>
           </nav>
 
           <div className="order-2 flex shrink-0 items-center">
@@ -1043,11 +1040,10 @@ export default function App() {
                 <span className="text-amber-600">Award-Winning Visual Precision.</span>
               </h1>
               <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-                Business & Research Analyst with 3 years of impact across{' '}
+                Business & Research Analyst with 3 years of professional experience across{' '}
                 <strong className="text-slate-900">KLA</strong>,{' '}
                 <strong className="text-slate-900">Stellantis</strong>, and{' '}
-                <strong className="text-slate-900">Bible Tours</strong>. Guide the golden butterfly
-                across the studio stage below—each camera shutter capture unlocks verified KPI impact.
+                <strong className="text-slate-900">Bible Tours</strong>. Explore the role highlights below, then try independently built demos that use fictional data—not employer-owned projects or systems.
               </p>
 
               {/* Competency Pills */}
@@ -1084,7 +1080,7 @@ export default function App() {
                 className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-blue-700 sm:w-auto"
               >
                 <BarChart3 className="w-4 h-4" />
-                <span>Explore ROI Case Studies</span>
+                <span>Explore Professional Experience</span>
               </a>
             </div>
           </div>
@@ -1104,21 +1100,20 @@ export default function App() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-5">
             <div>
               <span className="text-xs font-mono font-bold uppercase tracking-widest text-blue-600">
-                VERIFIED ENTERPRISE IMPACT • STAR METHODOLOGY
+                SELECTED PROFESSIONAL EXPERIENCE
               </span>
               <h2 className="mt-1 text-2xl sm:text-3xl font-black text-slate-900">
-                Process Automation, Infrastructure & SLA Case Studies
+                Business Analysis, IT Operations & Client Service
               </h2>
             </div>
             <p className="text-xs sm:text-sm text-slate-600 max-w-md">
-              Toggle each engagement between the{' '}
-              <strong className="text-slate-900">Executive Summary</strong> and the{' '}
-              <strong className="text-slate-900">Workflow Architecture</strong> pipeline.
+              A high-level view of each role and its transferable contributions. Internal workflows,
+              employer dashboards, source code and confidential project assets are intentionally not reproduced.
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {CASE_STUDIES.map((cs) => {
+            {PROFESSIONAL_EXPERIENCE.map((cs) => {
               const mode = caseViewModes[cs.id] || 'summary';
               return (
                 <article
@@ -1149,7 +1144,7 @@ export default function App() {
                             : 'text-slate-600 hover:text-slate-900'
                         }`}
                       >
-                        Executive Summary
+                        Role Overview
                       </button>
                       <button
                         type="button"
@@ -1160,7 +1155,7 @@ export default function App() {
                             : 'text-slate-600 hover:text-slate-900'
                         }`}
                       >
-                        Workflow Architecture
+                        Key Contributions
                       </button>
                     </div>
 
@@ -1168,19 +1163,19 @@ export default function App() {
                       <div className="space-y-3 text-xs leading-relaxed text-slate-600">
                         <div>
                           <span className="font-bold text-slate-900 uppercase tracking-wider text-[10px] block">
-                            1. Business Problem
+                            1. Role Context
                           </span>
                           {cs.problem}
                         </div>
                         <div>
                           <span className="font-bold text-slate-900 uppercase tracking-wider text-[10px] block">
-                            2. Stakeholder Requirements
+                            2. Stakeholder Scope
                           </span>
                           {cs.requirements}
                         </div>
                         <div>
                           <span className="font-bold text-slate-900 uppercase tracking-wider text-[10px] block">
-                            3. Process & BI Solution
+                            3. How I Contributed
                           </span>
                           {cs.solution}
                         </div>
@@ -1188,7 +1183,7 @@ export default function App() {
                     ) : (
                       <div className="space-y-2 py-2">
                         <span className="font-bold text-slate-900 uppercase tracking-wider text-[10px] block">
-                          System & Data Pipeline Architecture
+                          Transferable Contributions (High-Level)
                         </span>
                         {cs.architectureSteps.map((step, idx) => (
                           <div
@@ -1389,17 +1384,17 @@ export default function App() {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-5">
             <div>
               <span className="text-xs font-mono font-bold uppercase tracking-widest text-amber-600">
-                VISUAL & ANALYTICAL SYNERGY
+                INDEPENDENT BUILDS • SYNTHETIC DATA ONLY
               </span>
               <h2 className="mt-1 text-2xl sm:text-3xl font-black text-slate-900">
-                &ldquo;Framing the Data&rdquo; — Photography & Executive BI Showcase
+                Independent Project Demos & Photojournalism
               </h2>
             </div>
 
             <div className="grid w-full grid-cols-3 gap-1 rounded-xl border border-slate-200 bg-white p-1 text-xs font-semibold sm:inline-flex sm:w-auto">
               {[
-                { id: 'dual', label: 'Dual Synergy View' },
-                { id: 'bi', label: 'Executive BI Dashboards' },
+                { id: 'crm', label: 'CRM Workflow Simulator' },
+                { id: 'ops', label: 'Operations Analytics' },
                 { id: 'photo', label: 'Award Photojournalism' },
               ].map((tab) => (
                 <button
@@ -1414,7 +1409,7 @@ export default function App() {
                   }`}
                 >
                   <span className="sm:hidden">
-                    {tab.id === 'dual' ? 'Dual' : tab.id === 'bi' ? 'BI' : 'Photo'}
+                    {tab.id === 'crm' ? 'CRM' : tab.id === 'ops' ? 'Ops' : 'Photo'}
                   </span>
                   <span className="hidden sm:inline">{tab.label}</span>
                 </button>
@@ -1422,94 +1417,26 @@ export default function App() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {(activeShowcaseTab === 'dual' || activeShowcaseTab === 'photo') && (
-              <div className="rounded-3xl bg-white border border-slate-200/90 p-6 shadow-sm space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-600">
-                    <Aperture className="w-4 h-4" />
-                    <span>OPTICAL COMPOSITION & EDITORIAL HIERARCHY</span>
-                  </span>
-                  <span className="text-[11px] font-mono text-slate-500">
-                    f/1.4 • Rule of Thirds • Visual Weight
-                  </span>
+          <p className="max-w-4xl text-xs leading-relaxed text-slate-600 sm:text-sm">
+            These are independent portfolio exercises. All names, contacts, accounts, order references and metrics in the interactive demos are fictional sample data. No employer-owned dashboards, internal workflows, customer records or confidential assets are included.
+          </p>
+          <div className="space-y-6">
+            {activeShowcaseTab === 'crm' && <CrmWorkflowDemo />}
+            {activeShowcaseTab === 'ops' && <OperationsAnalyticsDemo />}
+            {activeShowcaseTab === 'photo' && (
+              <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-sm sm:p-7 space-y-5">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-600"><Aperture className="h-4 w-4" /> Optical composition & editorial hierarchy</span>
+                  <span className="text-[11px] font-mono text-slate-500">f/1.4 • Rule of Thirds • Visual Weight</span>
                 </div>
-                <h3 className="text-xl font-black text-slate-900">
-                  How Award-Winning Photojournalism Elevates Dashboard UX
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Winning 9+ MUN press photography awards trained my eye to isolate the decisive
-                  signal inside chaotic environments. I apply those exact optical rules—focal
-                  contrast, negative space, and visual hierarchy—when designing C-suite Power BI and
-                  Tableau views so executives spot bottlenecks in under 5 seconds.
+                <h3 className="text-xl font-black text-slate-900">How Award-Winning Photojournalism Elevates Dashboard UX</h3>
+                <p className="max-w-4xl text-xs leading-relaxed text-slate-600 sm:text-sm">
+                  Photojournalism develops an eye for separating the decisive signal from visual noise. The same principles—focal contrast, negative space and visual hierarchy—can help make analytical interfaces easier to scan and understand.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
-                  <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200/70">
-                    <span className="font-bold text-slate-900 block">Focal Isolation</span>
-                    <span className="text-slate-600 text-[11px]">
-                      Separates critical SLA breaches from background telemetry noise.
-                    </span>
-                  </div>
-                  <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200/70">
-                    <span className="font-bold text-slate-900 block">Leading Lines</span>
-                    <span className="text-slate-600 text-[11px]">
-                      Guides stakeholder eyes from headline KPI to root-cause drilldown.
-                    </span>
-                  </div>
-                  <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200/70">
-                    <span className="font-bold text-slate-900 block">Color Contrast</span>
-                    <span className="text-slate-600 text-[11px]">
-                      Reserves high-saturation Emerald & Gold strictly for actionable deltas.
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {(activeShowcaseTab === 'dual' || activeShowcaseTab === 'bi') && (
-              <div className="rounded-3xl bg-white border border-slate-200/90 p-6 shadow-sm space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600">
-                    <BarChart3 className="w-4 h-4" />
-                    <span>POWER BI, TABLEAU & SQL DELIVERABLES</span>
-                  </span>
-                  <span className="text-[11px] font-mono text-slate-500">
-                    Power BI • Tableau • Python • SQL
-                  </span>
-                </div>
-                <h3 className="text-xl font-black text-slate-900">
-                  Featured BI & Analytics Engineering Portfolio
-                </h3>
-                <div className="space-y-3 text-xs">
-                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-4">
-                    <div>
-                      <span className="font-bold text-slate-900 block">
-                        Loan Data Portfolio Dashboard (Power BI)
-                      </span>
-                      <span className="text-slate-600">
-                        Engineered 10+ risk, disbursement, and delinquency KPIs with interactive
-                        borrower cohort drill-downs.
-                      </span>
-                    </div>
-                    <span className="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold shrink-0">
-                      10+ KPIs
-                    </span>
-                  </div>
-
-                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-4">
-                    <div>
-                      <span className="font-bold text-slate-900 block">
-                        Employee Performance & HR Analytics Suite (Tableau)
-                      </span>
-                      <span className="text-slate-600">
-                        Visualized attrition drivers, productivity distributions, and department SLA
-                        benchmarks for leadership review.
-                      </span>
-                    </div>
-                    <span className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold shrink-0">
-                      Tableau BI
-                    </span>
-                  </div>
+                <div className="grid grid-cols-1 gap-3 pt-1 text-xs sm:grid-cols-3">
+                  <div className="rounded-2xl border border-amber-200/70 bg-amber-50/70 p-4"><span className="block font-bold text-slate-900">Focal Isolation</span><span className="text-[11px] text-slate-600">Draws attention to an important signal without overwhelming the reader.</span></div>
+                  <div className="rounded-2xl border border-amber-200/70 bg-amber-50/70 p-4"><span className="block font-bold text-slate-900">Leading Lines</span><span className="text-[11px] text-slate-600">Guides the eye from a headline metric to its supporting context.</span></div>
+                  <div className="rounded-2xl border border-amber-200/70 bg-amber-50/70 p-4"><span className="block font-bold text-slate-900">Color Contrast</span><span className="text-[11px] text-slate-600">Uses restrained color to distinguish status, change and priority.</span></div>
                 </div>
               </div>
             )}
